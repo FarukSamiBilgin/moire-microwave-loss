@@ -1,0 +1,2300 @@
+{
+  "_meta": {
+    "module": "M30 -- design of the single-photon microwave loss measurement of a MATBG circuit element",
+    "script": "scripts/run_m30_loss.py",
+    "deterministic": true,
+    "rng": null,
+    "inputs_read": {
+      "paper/M22_TOPOLOGY_SURVEY.md": "section E.7 (the survey's 6.3): no single-photon microwave loss measurement exists for any MATBG or twisted-trilayer circuit element",
+      "out/m23_majorana.json": "Delta_topo = 0.258 meV at Tc = 1.7 K, xi_M = 49.5 nm, and the argument that a Majorana qubit's lifetime is computable rather than measured",
+      "out/m25_tetron.json": "tetron footprint 1.14 um2, E_C = 80.6 GHz, and the still-missing parity measurement circuit",
+      "out/m28_superinductance.json": "Q_ind >= 3.22e6 for T1 = 100 us; the 5.87 um x 400 nm strip; the Q >= 10-50 bound",
+      "out/m15_first_device.json": "the 6-cell transmon ladder this module is compared against",
+      "out/m13_readout_chain.json": "the amplifier catalogue"
+    },
+    "claim_discipline": "ANALYTIC DESIGN AND ARITHMETIC.  NOT a measurement, NOT an EM solve, NOT a fabrication trial.  Every free parameter is registered in section 9 with a two-directional sensitivity. Speculation is tagged SPECULATION."
+  },
+  "literature": {
+    "tanaka_matbg_cqed": {
+      "ref": "arXiv:2406.13740 / Nature 638, 99 (2025)",
+      "authors": "Tanaka, Wang, Dinh, Rodan-Legrain, ... Jarillo-Herrero, Oliver",
+      "geometry": "Al lambda/4 CPW terminated to ground through hBN/MATBG/hBN",
+      "f_r_GHz": 4.2008154,
+      "Qi": 1044.7,
+      "Qi_err": 28.5,
+      "Qc": 4161.0,
+      "Qc_err": 54.4,
+      "control_f_GHz": 6.0653899,
+      "control_Qi": 74833.2,
+      "control_Qi_err": 1830.2,
+      "control_Qc": 24926.9,
+      "f0_insulating_GHz": 3.8,
+      "L_prx_nH": 1.32,
+      "frac_shift_ins_to_sc": 0.01,
+      "T_base_mK": 20.0,
+      "T_eff_mK": 40.0,
+      "Tc_half_K": 1.0,
+      "contacts": "Ti/Al edge contacts, RIE + thermal evaporation; 5 galvanic contacts",
+      "photon_number": "NOT STATED for Q_i.  Power was swept on f_r (Fig. 5d) and bias current was swept on Q_i (Supp. Fig. 17), but Q_i was never reported versus microwave power.",
+      "their_own_words": "'The resonator with MATBG termination features a quality factor exceeding 1000 at 20 mK ... capable of discerning changes in the superfluid stiffness at the 1% level.'"
+    },
+    "banerjee_ttg_rf": {
+      "ref": "arXiv:2406.13742 / Nature 638, 93 (2025)",
+      "f_r_MHz": 350.0,
+      "theta_deg": 1.55,
+      "LK_nH": [
+        120.0,
+        350.0
+      ],
+      "Rc_kohm": 3.2,
+      "rf_power_dBm": [
+        -112.0,
+        -102.0
+      ],
+      "limit": "R_rf = R_2t = R_c: the measured rf resistance IS the contact resistance, so the moire element's own dissipation sits below the contact floor and no intrinsic loss can be extracted."
+    },
+    "kreidel_vdw_resonator": {
+      "ref": "arXiv:2407.09916 (Kreidel, Chu, Balgley, ... Hone, Fong)",
+      "probe": "Nb lambda/4 CPW, 240 nm Nb, 2 kOhm/sq sheet R, float-zone Si",
+      "Q0_typ": 100000.0,
+      "samples": "two 80 nm Al strips (10 x 420 um) and three exfoliated NbSe2 strips",
+      "participation_statement": "'the participation ratio of the sample is merely a few p.p.t., the probe resonator quality factor Q_0 is too low for us to discern the true Q factor of the sample component.'",
+      "p_formula": "1/Q_eff = (4/pi)(r/Z0) = 2 (delta_omega0/omega0) tan_delta",
+      "TLS_peak_K": 0.2,
+      "TLS_peak_meaning": "Q_i peaks at T ~ hbar omega_0 / k_B; the peak is suppressed at higher drive power.  A published TLS fingerprint in this exact device class.",
+      "attenuation_dB": 65.0,
+      "flux_control": "holes periodically etched into the Nb ground plane to trap stray vortices"
+    },
+    "zaman_nbse2_KI": {
+      "ref": "arXiv:2511.08466 (Zaman, Wang, ... Jarillo-Herrero, Oliver), v3 Jan 2026",
+      "probe": "Al lambda/4 CPW, 250 nm MBE Al on high-resistivity Si",
+      "Lsq_monolayer_nH": 1.2,
+      "Kerr_Hz_per_photon": [
+        -0.008,
+        -14.7
+      ],
+      "T_base_mK": 10.0,
+      "spectator_Qi": 5985000.0,
+      "spectator_Qc": 100000.0,
+      "spectator_f_GHz": 6.0583,
+      "single_photon": true,
+      "note": "THE KEY PRECEDENT: this is the M30 measurement, done at the single-photon level, on a van der Waals superconductor -- but NbSe2, which is not a moire material.  It supplies the recipe, the contact process and the control-resonator discipline.",
+      "devices": [
+        [
+          "D1",
+          1.99,
+          3.1,
+          3.1,
+          3.62,
+          5.3,
+          1.195,
+          1.195,
+          8000.0
+        ],
+        [
+          "D2",
+          4.08,
+          2.5,
+          5.7,
+          4.14,
+          5.21,
+          0.643,
+          0.282,
+          60000.0
+        ],
+        [
+          "D3",
+          5.86,
+          2.6,
+          3.0,
+          4.88,
+          5.33,
+          0.22,
+          0.191,
+          7000.0
+        ],
+        [
+          "D4",
+          7.13,
+          4.8,
+          6.7,
+          4.93,
+          5.35,
+          0.2,
+          0.143,
+          24000.0
+        ],
+        [
+          "D5",
+          7.98,
+          4.5,
+          12.0,
+          4.63,
+          5.33,
+          0.36,
+          0.135,
+          12000.0
+        ],
+        [
+          "D6",
+          8.81,
+          3.9,
+          8.6,
+          4.79,
+          5.34,
+          0.274,
+          0.124,
+          28000.0
+        ],
+        [
+          "D7",
+          8.9,
+          4.5,
+          4.2,
+          5.26,
+          5.49,
+          0.1,
+          0.107,
+          21000.0
+        ],
+        [
+          "D8",
+          10.07,
+          2.5,
+          6.6,
+          5.16,
+          5.49,
+          0.149,
+          0.056,
+          7000.0
+        ],
+        [
+          "D9",
+          11.89,
+          6.0,
+          6.9,
+          5.46,
+          5.6,
+          0.057,
+          0.049,
+          6000.0
+        ],
+        [
+          "D10",
+          24.73,
+          4.1,
+          7.5,
+          5.34,
+          5.37,
+          0.014,
+          0.008,
+          180000.0
+        ],
+        [
+          "D11",
+          30.2,
+          3.4,
+          6.1,
+          5.42,
+          5.44,
+          0.009,
+          0.005,
+          25000.0
+        ],
+        [
+          "D12",
+          52.12,
+          2.3,
+          4.6,
+          5.6,
+          5.62,
+          0.008,
+          0.004,
+          58000.0
+        ]
+      ],
+      "authors_attribution": "'likely due to additional dissipation arising from imperfect electrical contacts between the Al and the NbSe2, as well as dielectric loss introduced by residual polymer contamination from the dry transfer process.'"
+    },
+    "balgley_vdw_transmon": {
+      "ref": "arXiv:2512.08059 (Balgley, Park, Chu, ... Hone, Fong), Dec 2025",
+      "device": "all-van-der-Waals merged-element transmon, NbSe2/WSe2/NbSe2",
+      "T1_mean_us": [
+        1.11,
+        1.67,
+        0.27,
+        0.2
+      ],
+      "T1_best_us": [
+        1.39,
+        2.46,
+        0.38,
+        null
+      ],
+      "T2E_best_us": [
+        1.47,
+        4.82,
+        null,
+        null
+      ],
+      "p_qubit_pct": [
+        97,
+        96,
+        91,
+        98
+      ],
+      "tan_delta_qubit": [
+        3.09e-05,
+        1.69e-05,
+        0.000122,
+        0.0001576
+      ],
+      "tan_delta_capacitor": [
+        3.31e-05,
+        5.6e-05,
+        9.08e-05,
+        0.0001402
+      ],
+      "p_capacitor_pct": [
+        16,
+        18,
+        18,
+        12
+      ],
+      "single_photon_dBm": -145.0,
+      "p_formula": "p = |sin(varphi)| / (varphi + |sin(varphi)|); 1/Q_term = 2 p tan_delta + (1-p)/Q_open",
+      "T_mK": 15.0,
+      "attenuation_dB": [
+        70.0,
+        84.0
+      ],
+      "MXC_attenuator_dB": 40.0,
+      "note": "the state of the art for a van der Waals QUBIT: T1 ~ 1-2 us, loss tangent 1.7e-5 to 1.6e-4, dielectric-loss limited, NOT quasiparticle limited.  This is the prior that M30's thresholds must be read against."
+    },
+    "hBN": {
+      "ref": "arXiv:2109.00015 / Nature Materials 21, 398 (2022)",
+      "tan_delta_upper": 5e-06,
+      "eps_perp": 3.76,
+      "eps_ref": "Laturia, de Put, Vandenberghe, npj 2D Mater. Appl. 2, 6 (2018)",
+      "photons": 1.0,
+      "T_mK": 10.0
+    },
+    "grAl": {
+      "ref": "arXiv:2411.12611",
+      "Qi_best_allgrAl": 3660000.0,
+      "Qi_best_hybrid": 4720000.0,
+      "Qi_worst": 460000.0,
+      "Lsq_pH_max": 320.0,
+      "photons": 1.0,
+      "trend": "Q_i falls monotonically with sheet inductance (also seen in NbN, InO)"
+    },
+    "jha_matt_Lsq": {
+      "ref": "arXiv:2403.02320 / Phys. Rev. Lett. 134, 216001 (2025)",
+      "material": "magic-angle twisted TRILAYER graphene, 1.71-1.73 deg",
+      "Lsq_nH": [
+        10.0,
+        150.0
+      ],
+      "xi_nm_upper": 200.0,
+      "loss": "NOT MEASURED; 'it will be intriguing to investigate the kinetic impedance at high frequencies'"
+    },
+    "graphene_qubit": {
+      "ref": "arXiv:2506.04959 (Aparicio, Messelot et al.)",
+      "T1_ns": 716.0,
+      "T1_err_ns": 17.0,
+      "note": "best graphene superconducting qubit; Wang et al., Nat. Nanotech. 14, 120 (2019) graphene gatemon ~70 ns"
+    },
+    "fit_methods": {
+      "circle_fit": "Probst, Song, Bushev, Ustinov, Weides, Rev. Sci. Instrum. 86, 024706 (2015), arXiv:1410.3365",
+      "circle_fit_optimisation": "Baity et al., Phys. Rev. Research 6, 013329 (2024)",
+      "loss_review": "McRae, Wang, Bejanin, Pagel, Dunsworth, Mariantoni, Rev. Sci. Instrum. 91, 091101 (2020), arXiv:2006.04718",
+      "photon_number": "n_r = 2 kappa P_rf / (hbar omega_r (kappa + gamma)^2); form as used in arXiv:2511.08466 Eq. 5, after Norris et al., EPJ Quantum Technology 11, 5 (2024)"
+    },
+    "amplifier": {
+      "ref": "Ranadive et al., Nature Electronics (2025); catalogued in out/m13_readout_chain.json",
+      "name": "JTWPA 3-11 GHz",
+      "n_add": 1.0,
+      "P1dB_dBm": -102.0
+    }
+  },
+  "participation": {
+    "participation_curve": [
+      {
+        "wL_over_Z0": 0.01,
+        "phi_rad": 0.01,
+        "p": 0.01273,
+        "p_perturbative_2dfof": 0.01273,
+        "stub_frac_of_quarterwave": 0.99363
+      },
+      {
+        "wL_over_Z0": 0.1,
+        "phi_rad": 0.09967,
+        "p": 0.12612,
+        "p_perturbative_2dfof": 0.1269,
+        "stub_frac_of_quarterwave": 0.93655
+      },
+      {
+        "wL_over_Z0": 0.3,
+        "phi_rad": 0.29146,
+        "p": 0.35409,
+        "p_perturbative_2dfof": 0.37109,
+        "stub_frac_of_quarterwave": 0.81445
+      },
+      {
+        "wL_over_Z0": 1.0,
+        "phi_rad": 0.7854,
+        "p": 0.77797,
+        "p_perturbative_2dfof": 1.0,
+        "stub_frac_of_quarterwave": 0.5
+      },
+      {
+        "wL_over_Z0": 3.0,
+        "phi_rad": 1.24905,
+        "p": 0.96502,
+        "p_perturbative_2dfof": 1.59033,
+        "stub_frac_of_quarterwave": 0.20483
+      },
+      {
+        "wL_over_Z0": 10.0,
+        "phi_rad": 1.47113,
+        "p": 0.99668,
+        "p_perturbative_2dfof": 1.8731,
+        "stub_frac_of_quarterwave": 0.06345
+      },
+      {
+        "wL_over_Z0": 30.0,
+        "phi_rad": 1.53748,
+        "p": 0.99963,
+        "p_perturbative_2dfof": 1.95757,
+        "stub_frac_of_quarterwave": 0.02121
+      },
+      {
+        "wL_over_Z0": 100.0,
+        "phi_rad": 1.5608,
+        "p": 0.99997,
+        "p_perturbative_2dfof": 1.98727,
+        "stub_frac_of_quarterwave": 0.00637
+      },
+      {
+        "wL_over_Z0": 300.0,
+        "phi_rad": 1.56746,
+        "p": 1.0,
+        "p_perturbative_2dfof": 1.99576,
+        "stub_frac_of_quarterwave": 0.00212
+      },
+      {
+        "wL_over_Z0": 1000.0,
+        "phi_rad": 1.5698,
+        "p": 1.0,
+        "p_perturbative_2dfof": 1.99873,
+        "stub_frac_of_quarterwave": 0.00064
+      }
+    ],
+    "participation_curve_reading": "p climbs through 0.5 at omega L / Z0 = 1.4 and reaches 0.99 only above omega L / Z0 ~ 80.  The perturbative form 2|df/f| tracks the exact curve to better than 5% only below omega L / Z0 ~ 0.35, i.e. exactly where p < 0.4.  There is no regime in which the measurement is both perturbative and sensitive.",
+    "published_moire_geometry": {
+      "source": "arXiv:2406.13740 / Nature 638, 99 (2025)",
+      "Qi": 1044.7,
+      "Qi_err": 28.5,
+      "Qc": 4161.0,
+      "f_GHz": 4.2008154,
+      "control_Qi": 74833.2,
+      "control_f_GHz": 6.0653899,
+      "fractional_shift": 0.01,
+      "p_from_2dfof": 0.02,
+      "Q_MATBG_lower_bound": 20.9,
+      "tan_delta_upper_bound": 0.04786,
+      "Q_MATBG_from_excess_loss": 21.2,
+      "photon_number": "NOT STATED for Q_i.  Power was swept on f_r (Fig. 5d) and bias current was swept on Q_i (Supp. Fig. 17), but Q_i was never reported versus microwave power.",
+      "verdict": "a BOUND, not a measurement, and it is weak because p = 2%."
+    },
+    "published_vdw_ladder": {
+      "source": "arXiv:2511.08466 (Zaman, Wang, ... Jarillo-Herrero, Oliver), v3 Jan 2026",
+      "material": "NbSe2 (NOT moire)",
+      "rows": [
+        {
+          "device": "D1",
+          "d_nm": 1.99,
+          "Lk_nH": 1.195,
+          "Lsq_nH_per_sq": 1.195,
+          "f_sample_GHz": 3.62,
+          "f_Al_GHz": 5.3,
+          "Qi": 8000.0,
+          "p_exact": 0.5623,
+          "p_lumped_1_minus_fsq": 0.5335,
+          "tan_delta_upper": 0.0002222,
+          "Q_sample_lower": 4501.0,
+          "figure_of_merit_pQi": 4498.4
+        },
+        {
+          "device": "D2",
+          "d_nm": 4.08,
+          "Lk_nH": 0.643,
+          "Lsq_nH_per_sq": 0.282,
+          "f_sample_GHz": 4.14,
+          "f_Al_GHz": 5.21,
+          "Qi": 60000.0,
+          "p_exact": 0.3885,
+          "p_lumped_1_minus_fsq": 0.3686,
+          "tan_delta_upper": 4.264e-05,
+          "Q_sample_lower": 23453.2,
+          "figure_of_merit_pQi": 23309.4
+        },
+        {
+          "device": "D3",
+          "d_nm": 5.86,
+          "Lk_nH": 0.22,
+          "Lsq_nH_per_sq": 0.191,
+          "f_sample_GHz": 4.88,
+          "f_Al_GHz": 5.33,
+          "Qi": 7000.0,
+          "p_exact": 0.1689,
+          "p_lumped_1_minus_fsq": 0.1617,
+          "tan_delta_upper": 0.0008451,
+          "Q_sample_lower": 1183.3,
+          "figure_of_merit_pQi": 1182.1
+        },
+        {
+          "device": "D4",
+          "d_nm": 7.13,
+          "Lk_nH": 0.2,
+          "Lsq_nH_per_sq": 0.143,
+          "f_sample_GHz": 4.93,
+          "f_Al_GHz": 5.35,
+          "Qi": 24000.0,
+          "p_exact": 0.1555,
+          "p_lumped_1_minus_fsq": 0.1508,
+          "tan_delta_upper": 0.000267,
+          "Q_sample_lower": 3744.6,
+          "figure_of_merit_pQi": 3731.9
+        },
+        {
+          "device": "D5",
+          "d_nm": 7.98,
+          "Lk_nH": 0.36,
+          "Lsq_nH_per_sq": 0.135,
+          "f_sample_GHz": 4.63,
+          "f_Al_GHz": 5.33,
+          "Qi": 12000.0,
+          "p_exact": 0.2564,
+          "p_lumped_1_minus_fsq": 0.2454,
+          "tan_delta_upper": 0.0003245,
+          "Q_sample_lower": 3081.7,
+          "figure_of_merit_pQi": 3077.2
+        },
+        {
+          "device": "D6",
+          "d_nm": 8.81,
+          "Lk_nH": 0.274,
+          "Lsq_nH_per_sq": 0.124,
+          "f_sample_GHz": 4.79,
+          "f_Al_GHz": 5.34,
+          "Qi": 28000.0,
+          "p_exact": 0.2048,
+          "p_lumped_1_minus_fsq": 0.1954,
+          "tan_delta_upper": 0.0001737,
+          "Q_sample_lower": 5756.1,
+          "figure_of_merit_pQi": 5734.7
+        },
+        {
+          "device": "D7",
+          "d_nm": 8.9,
+          "Lk_nH": 0.1,
+          "Lsq_nH_per_sq": 0.107,
+          "f_sample_GHz": 5.26,
+          "f_Al_GHz": 5.49,
+          "Qi": 21000.0,
+          "p_exact": 0.0838,
+          "p_lumped_1_minus_fsq": 0.082,
+          "tan_delta_upper": 0.0005664,
+          "Q_sample_lower": 1765.6,
+          "figure_of_merit_pQi": 1759.9
+        },
+        {
+          "device": "D8",
+          "d_nm": 10.07,
+          "Lk_nH": 0.149,
+          "Lsq_nH_per_sq": 0.056,
+          "f_sample_GHz": 5.16,
+          "f_Al_GHz": 5.49,
+          "Qi": 7000.0,
+          "p_exact": 0.1219,
+          "p_lumped_1_minus_fsq": 0.1166,
+          "tan_delta_upper": 0.00117,
+          "Q_sample_lower": 854.3,
+          "figure_of_merit_pQi": 853.5
+        },
+        {
+          "device": "D9",
+          "d_nm": 11.89,
+          "Lk_nH": 0.057,
+          "Lsq_nH_per_sq": 0.049,
+          "f_sample_GHz": 5.46,
+          "f_Al_GHz": 5.6,
+          "Qi": 6000.0,
+          "p_exact": 0.0497,
+          "p_lumped_1_minus_fsq": 0.0494,
+          "tan_delta_upper": 0.003349,
+          "Q_sample_lower": 298.6,
+          "figure_of_merit_pQi": 298.3
+        },
+        {
+          "device": "D10",
+          "d_nm": 24.73,
+          "Lk_nH": 0.014,
+          "Lsq_nH_per_sq": 0.008,
+          "f_sample_GHz": 5.34,
+          "f_Al_GHz": 5.37,
+          "Qi": 180000.0,
+          "p_exact": 0.012,
+          "p_lumped_1_minus_fsq": 0.0111,
+          "tan_delta_upper": 0.0004507,
+          "Q_sample_lower": 2218.8,
+          "figure_of_merit_pQi": 2152.9
+        },
+        {
+          "device": "D11",
+          "d_nm": 30.2,
+          "Lk_nH": 0.009,
+          "Lsq_nH_per_sq": 0.005,
+          "f_sample_GHz": 5.42,
+          "f_Al_GHz": 5.44,
+          "Qi": 25000.0,
+          "p_exact": 0.0078,
+          "p_lumped_1_minus_fsq": 0.0073,
+          "tan_delta_upper": 0.005104,
+          "Q_sample_lower": 195.9,
+          "figure_of_merit_pQi": 195.1
+        },
+        {
+          "device": "D12",
+          "d_nm": 52.12,
+          "Lk_nH": 0.008,
+          "Lsq_nH_per_sq": 0.004,
+          "f_sample_GHz": 5.6,
+          "f_Al_GHz": 5.62,
+          "Qi": 58000.0,
+          "p_exact": 0.0072,
+          "p_lumped_1_minus_fsq": 0.0071,
+          "tan_delta_upper": 0.002382,
+          "Q_sample_lower": 419.8,
+          "figure_of_merit_pQi": 415.7
+        }
+      ],
+      "best_bound_device": "D2",
+      "best_tan_delta_upper": 4.264e-05,
+      "best_Q_sample_lower": 23453.2,
+      "spectator_Qi": 5985000.0,
+      "reading": "twelve devices, single-photon, one chip family, and the best bound on the vdW element itself is tan_delta <= 4.3e-05 (Q >= 23453).  Q_i does NOT fall monotonically with L_k: D2 has 2.3x the kinetic inductance of D6 and 2x the Q_i.  The 10x device-to-device scatter at fixed L_k is the signature of a per-device extrinsic channel -- which is what the authors themselves say: 'likely due to additional dissipation arising from imperfect electrical contacts between the Al and the NbSe2, as well as dielectric loss introduced by residual polymer contamination from the dry transfer process.'",
+      "why_it_matters_for_M30": "this is M30's experiment, already performed at single-photon level by the same group that made the MATBG measurement, on a vdW superconductor that is not moire.  It de-risks the fabrication and the analysis completely.  It also shows the ceiling of the terminating-inductor geometry as published: the highest participation anywhere in the twelve devices is p = 0.56, and the device giving the best loss bound sits at p = 0.39."
+    }
+  },
+  "design": {
+    "ladder": [
+      {
+        "N_squares": 2.0,
+        "strip_width_nm": 903.7,
+        "strip_length_um": 1.807,
+        "L_nH": 58.6,
+        "f_r_GHz": 7.5,
+        "C_required_fF": 7.685,
+        "Z_kohm": 2.76,
+        "wL_over_Z0": 55.2,
+        "participation": 0.99989,
+        "equivalent_stub_length_um": 45.74,
+        "stub_distributed_C_fF": 7.684,
+        "hf_over_kB_mK": 359.9,
+        "I_zpf_nA": 6.512,
+        "I_depairing_nA": 180.7,
+        "I_zpf_over_I_dep": 0.036,
+        "phase_zpf_rad": 1.1595,
+        "phase_available_rad": 3.478,
+        "phase_headroom_factor": 3.0,
+        "width_over_xi": 4.52,
+        "area_um2": 1.633
+      },
+      {
+        "N_squares": 5.0,
+        "strip_width_nm": 532.1,
+        "strip_length_um": 2.66,
+        "L_nH": 146.5,
+        "f_r_GHz": 6.5,
+        "C_required_fF": 4.092,
+        "Z_kohm": 5.98,
+        "wL_over_Z0": 119.7,
+        "participation": 0.99998,
+        "equivalent_stub_length_um": 24.36,
+        "stub_distributed_C_fF": 4.092,
+        "hf_over_kB_mK": 312.0,
+        "I_zpf_nA": 3.834,
+        "I_depairing_nA": 106.4,
+        "I_zpf_over_I_dep": 0.036,
+        "phase_zpf_rad": 1.7067,
+        "phase_available_rad": 5.12,
+        "phase_headroom_factor": 3.0,
+        "width_over_xi": 2.66,
+        "area_um2": 1.416
+      },
+      {
+        "N_squares": 14.7,
+        "strip_width_nm": 400.0,
+        "strip_length_um": 5.88,
+        "L_nH": 430.71,
+        "f_r_GHz": 5.5,
+        "C_required_fF": 1.944,
+        "Z_kohm": 14.88,
+        "wL_over_Z0": 297.7,
+        "participation": 1.0,
+        "equivalent_stub_length_um": 11.57,
+        "stub_distributed_C_fF": 1.944,
+        "hf_over_kB_mK": 264.0,
+        "I_zpf_nA": 2.057,
+        "I_depairing_nA": 80.0,
+        "I_zpf_over_I_dep": 0.0257,
+        "phase_zpf_rad": 2.6919,
+        "phase_available_rad": 11.316,
+        "phase_headroom_factor": 4.2,
+        "width_over_xi": 2.0,
+        "area_um2": 2.352
+      },
+      {
+        "N_squares": 40.0,
+        "strip_width_nm": 400.0,
+        "strip_length_um": 16.0,
+        "L_nH": 1172.0,
+        "f_r_GHz": 4.5,
+        "C_required_fF": 1.067,
+        "Z_kohm": 33.14,
+        "wL_over_Z0": 662.8,
+        "participation": 1.0,
+        "equivalent_stub_length_um": 6.35,
+        "stub_distributed_C_fF": 1.067,
+        "hf_over_kB_mK": 216.0,
+        "I_zpf_nA": 1.128,
+        "I_depairing_nA": 80.0,
+        "I_zpf_over_I_dep": 0.0141,
+        "phase_zpf_rad": 4.0165,
+        "phase_available_rad": 30.792,
+        "phase_headroom_factor": 7.67,
+        "width_over_xi": 2.0,
+        "area_um2": 6.4
+      },
+      {
+        "N_squares": 100.0,
+        "strip_width_nm": 400.0,
+        "strip_length_um": 40.0,
+        "L_nH": 2930.0,
+        "f_r_GHz": 3.8,
+        "C_required_fF": 0.599,
+        "Z_kohm": 69.96,
+        "wL_over_Z0": 1399.1,
+        "participation": 1.0,
+        "equivalent_stub_length_um": 3.56,
+        "stub_distributed_C_fF": 0.599,
+        "hf_over_kB_mK": 182.4,
+        "I_zpf_nA": 0.655,
+        "I_depairing_nA": 80.0,
+        "I_zpf_over_I_dep": 0.0082,
+        "phase_zpf_rad": 5.8358,
+        "phase_available_rad": 76.98,
+        "phase_headroom_factor": 13.19,
+        "width_over_xi": 2.0,
+        "area_um2": 16.0
+      }
+    ],
+    "ladder_note": "the 'equivalent stub length' and 'stub distributed C' columns are the same device read as a shorted CPW stub instead of a lumped LC.  They agree with the required C to within the conformal-mapping accuracy, which is the point: the M30 device is the Tanaka/Zaman geometry with the line shortened from a quarter wave (~5.8 mm) to a 4-46 um stub.  Nothing else about the fabrication changes.",
+    "ladder_headline": "participation runs 0.9999 to 1.00000 across the ladder -- 50x better than the published moire geometry's 0.02 and about 2x better than the highest participation anywhere in the published vdW ladder.",
+    "width_rule": {
+      "law": "dphi/dl|max = 2/(3 sqrt(3) xi) = 1.925 rad/um (M28, from arXiv:2403.02320)",
+      "rule": "w = max(2 xi, headroom * phi_zpf / (N * dphi/dl)) with headroom = 3",
+      "consequence": "the two low-N rungs are drawn WIDE (904 nm and 532 nm) and the three high-N rungs sit at the 400 nm floor.  Widening also lowers the contact resistance as 1/w, which is folded into the fit in section 4.",
+      "divergence_from_M28": "M28 registered w/xi = 2 as 'the key geometric lever, narrower is better on every axis'.  That is true for the QUBIT and false for the MEASUREMENT.  The two optima disagree and the M30 mask must not simply copy M28's geometry."
+    },
+    "linearity_check": {
+      "I_zpf_nA_range": [
+        0.655,
+        6.512
+      ],
+      "I_depairing_basis": "K_c^max = 200 nA/um (arXiv:2403.02320), so I_dep = K_c * w",
+      "worst_ratio_I_zpf_over_I_dep": 0.036,
+      "conservative_alternative": "if one instead compares against the JUNCTION critical currents quoted in the same paper (I_c1 = 6 nA on the hole branch, 45 nA on the electron branch, for 1 um x 1 um and 0.5 um x 2.5 um junctions), the top rung's zero-point current is a comparable fraction of the 6 nA figure.  Those are junction critical currents, not the sheet depairing current, and the sheet figure is the right comparison for a continuous strip -- but the ambiguity is real and it is the reason the phase headroom factor is set to 3 rather than to 1.2 as in M28.",
+      "Kerr_reference": "NbSe2 kinetic inductors show K/2pi = -0.008 to -14.7 Hz/photon (arXiv:2511.08466); a moire strip with 20-200x the sheet inductance and a far smaller depairing current will be much more nonlinear, so the n = 1 point is mandatory and the Kerr shift is itself a measurable.  SPECULATION on the magnitude.",
+      "verdict": "with the width rule applied, the single-photon current is at most 3.6 per cent of the sheet depairing current and the zero-point phase uses at most one third of the available phase, so every rung is a linear resonator at n = 1.  The high-power end of the sweep WILL bifurcate, exactly as arXiv:2511.08466 saw at -82 dBm, and that bifurcation is the in-situ calibration of the depairing current."
+    }
+  },
+  "contacts": {
+    "contact_ceiling": [
+      {
+        "rho_c_ohm_um": 100.0,
+        "contact_pad_width_um": 10.0,
+        "R_c_total_ohm": 20.0,
+        "label": "edge contact to a 2D crystal at the demonstrated 100 Ohm.um (Wang et al., Science 342, 614 (2013)); this is the design target",
+        "rows": [
+          {
+            "N_squares": 2.0,
+            "f_r_GHz": 7.5,
+            "Z_kohm": 2.76,
+            "Q_contact_limit": 138.1
+          },
+          {
+            "N_squares": 5.0,
+            "f_r_GHz": 6.5,
+            "Z_kohm": 5.98,
+            "Q_contact_limit": 299.2
+          },
+          {
+            "N_squares": 14.7,
+            "f_r_GHz": 5.5,
+            "Z_kohm": 14.88,
+            "Q_contact_limit": 744.2
+          },
+          {
+            "N_squares": 40.0,
+            "f_r_GHz": 4.5,
+            "Z_kohm": 33.14,
+            "Q_contact_limit": 1656.9
+          },
+          {
+            "N_squares": 100.0,
+            "f_r_GHz": 3.8,
+            "Z_kohm": 69.96,
+            "Q_contact_limit": 3497.8
+          }
+        ],
+        "Q_contact_range": [
+          138.1,
+          3497.8
+        ]
+      },
+      {
+        "rho_c_ohm_um": 1000.0,
+        "contact_pad_width_um": 10.0,
+        "R_c_total_ohm": 200.0,
+        "label": "10x worse than the demonstrated figure, allowing for the flat band's low carrier density under the contact",
+        "rows": [
+          {
+            "N_squares": 2.0,
+            "f_r_GHz": 7.5,
+            "Z_kohm": 2.76,
+            "Q_contact_limit": 13.8
+          },
+          {
+            "N_squares": 5.0,
+            "f_r_GHz": 6.5,
+            "Z_kohm": 5.98,
+            "Q_contact_limit": 29.9
+          },
+          {
+            "N_squares": 14.7,
+            "f_r_GHz": 5.5,
+            "Z_kohm": 14.88,
+            "Q_contact_limit": 74.4
+          },
+          {
+            "N_squares": 40.0,
+            "f_r_GHz": 4.5,
+            "Z_kohm": 33.14,
+            "Q_contact_limit": 165.7
+          },
+          {
+            "N_squares": 100.0,
+            "f_r_GHz": 3.8,
+            "Z_kohm": 69.96,
+            "Q_contact_limit": 349.8
+          }
+        ],
+        "Q_contact_range": [
+          13.8,
+          349.8
+        ]
+      },
+      {
+        "rho_c_ohm_um": 16000.0,
+        "contact_pad_width_um": 10.0,
+        "R_c_total_ohm": 3200.0,
+        "label": "the one published moire rf number, 3.2 kOhm total (arXiv:2406.13742), converted under an ASSUMED 2 um contact width -- the width is not available to me and this conversion is flagged",
+        "rows": [
+          {
+            "N_squares": 2.0,
+            "f_r_GHz": 7.5,
+            "Z_kohm": 2.76,
+            "Q_contact_limit": 0.9
+          },
+          {
+            "N_squares": 5.0,
+            "f_r_GHz": 6.5,
+            "Z_kohm": 5.98,
+            "Q_contact_limit": 1.9
+          },
+          {
+            "N_squares": 14.7,
+            "f_r_GHz": 5.5,
+            "Z_kohm": 14.88,
+            "Q_contact_limit": 4.7
+          },
+          {
+            "N_squares": 40.0,
+            "f_r_GHz": 4.5,
+            "Z_kohm": 33.14,
+            "Q_contact_limit": 10.4
+          },
+          {
+            "N_squares": 100.0,
+            "f_r_GHz": 3.8,
+            "Z_kohm": 69.96,
+            "Q_contact_limit": 21.9
+          }
+        ],
+        "Q_contact_range": [
+          0.9,
+          21.9
+        ]
+      }
+    ],
+    "contact_specification": {
+      "rho_c_definition": "R_c(total) = 2 rho_c / W_pad, two contacts in series",
+      "contact_pad_width_um": 10.0,
+      "why_a_pad": "the strip is 400 nm to 1 um wide but the CONTACT need not be: flaring the moire into a 10 um pad at each end before the edge contact cuts R_c by up to 25x at no cost in inductance, because the flared region contributes a fraction of a square.  This is the cheapest single improvement available to the design and it is a layout change.",
+      "catastrophic_case": "if the 3.2 kOhm of arXiv:2406.13742 is a fixed lumped interface resistance that does NOT scale with contact width, no pad helps and the galvanic design is dead on arrival.  That is exactly what kill K0 tests, by DC, before cooling."
+    },
+    "contact_ceiling_reading": "Q_contact = omega L / R_c = Z / R_c.  At the published moire contact resistance the whole ladder is pinned below Q ~ 10-100 and the experiment measures the contacts.  This is the single largest risk in the design and it is why the contact resistance is a PRE-REGISTERED GATE measured by DC 4-probe on a companion Hall bar before the resonator chip is cooled.",
+    "intercept_fit": [
+      {
+        "rho_c_ohm_um": 100.0,
+        "tan_delta_true": 3.1e-07,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 3.1e-07,
+        "sigma_intercept": 3.627e-06,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 1.088e-05,
+        "resolvable_floor_Q": 91904.8,
+        "rho_c_recovered_ohm_um": 100.0,
+        "sigma_rho_c_ohm_um": 0.64
+      },
+      {
+        "rho_c_ohm_um": 100.0,
+        "tan_delta_true": 3.1e-07,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 3.1e-07,
+        "sigma_intercept": 1.088e-05,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 3.264e-05,
+        "resolvable_floor_Q": 30634.9,
+        "rho_c_recovered_ohm_um": 100.0,
+        "sigma_rho_c_ohm_um": 1.92
+      },
+      {
+        "rho_c_ohm_um": 100.0,
+        "tan_delta_true": 3.1e-06,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 3.1e-06,
+        "sigma_intercept": 3.651e-06,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 1.095e-05,
+        "resolvable_floor_Q": 91292.9,
+        "rho_c_recovered_ohm_um": 100.0,
+        "sigma_rho_c_ohm_um": 0.64
+      },
+      {
+        "rho_c_ohm_um": 100.0,
+        "tan_delta_true": 3.1e-06,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 3.1e-06,
+        "sigma_intercept": 1.095e-05,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 3.286e-05,
+        "resolvable_floor_Q": 30431.0,
+        "rho_c_recovered_ohm_um": 100.0,
+        "sigma_rho_c_ohm_um": 1.93
+      },
+      {
+        "rho_c_ohm_um": 100.0,
+        "tan_delta_true": 3.1e-05,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 3.1e-05,
+        "sigma_intercept": 3.893e-06,
+        "detected_at_3sigma": true,
+        "resolvable_floor_tan_delta": 1.168e-05,
+        "resolvable_floor_Q": 85621.6,
+        "rho_c_recovered_ohm_um": 100.0,
+        "sigma_rho_c_ohm_um": 0.65
+      },
+      {
+        "rho_c_ohm_um": 100.0,
+        "tan_delta_true": 3.1e-05,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 3.1e-05,
+        "sigma_intercept": 1.168e-05,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 3.504e-05,
+        "resolvable_floor_Q": 28540.5,
+        "rho_c_recovered_ohm_um": 100.0,
+        "sigma_rho_c_ohm_um": 1.96
+      },
+      {
+        "rho_c_ohm_um": 100.0,
+        "tan_delta_true": 0.00031,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 0.00031,
+        "sigma_intercept": 6.191e-06,
+        "detected_at_3sigma": true,
+        "resolvable_floor_tan_delta": 1.857e-05,
+        "resolvable_floor_Q": 53844.1,
+        "rho_c_recovered_ohm_um": 100.0,
+        "sigma_rho_c_ohm_um": 0.75
+      },
+      {
+        "rho_c_ohm_um": 100.0,
+        "tan_delta_true": 0.00031,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 0.00031,
+        "sigma_intercept": 1.857e-05,
+        "detected_at_3sigma": true,
+        "resolvable_floor_tan_delta": 5.572e-05,
+        "resolvable_floor_Q": 17948.0,
+        "rho_c_recovered_ohm_um": 100.0,
+        "sigma_rho_c_ohm_um": 2.24
+      },
+      {
+        "rho_c_ohm_um": 1000.0,
+        "tan_delta_true": 3.1e-07,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 3.1e-07,
+        "sigma_intercept": 3.625e-05,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.0001087,
+        "resolvable_floor_Q": 9196.7,
+        "rho_c_recovered_ohm_um": 1000.0,
+        "sigma_rho_c_ohm_um": 6.41
+      },
+      {
+        "rho_c_ohm_um": 1000.0,
+        "tan_delta_true": 3.1e-07,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 3.1e-07,
+        "sigma_intercept": 0.0001087,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.0003262,
+        "resolvable_floor_Q": 3065.6,
+        "rho_c_recovered_ohm_um": 1000.0,
+        "sigma_rho_c_ohm_um": 19.23
+      },
+      {
+        "rho_c_ohm_um": 1000.0,
+        "tan_delta_true": 3.1e-06,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 3.1e-06,
+        "sigma_intercept": 3.627e-05,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.0001088,
+        "resolvable_floor_Q": 9190.5,
+        "rho_c_recovered_ohm_um": 1000.0,
+        "sigma_rho_c_ohm_um": 6.41
+      },
+      {
+        "rho_c_ohm_um": 1000.0,
+        "tan_delta_true": 3.1e-06,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 3.1e-06,
+        "sigma_intercept": 0.0001088,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.0003264,
+        "resolvable_floor_Q": 3063.5,
+        "rho_c_recovered_ohm_um": 1000.0,
+        "sigma_rho_c_ohm_um": 19.23
+      },
+      {
+        "rho_c_ohm_um": 1000.0,
+        "tan_delta_true": 3.1e-05,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 3.1e-05,
+        "sigma_intercept": 3.651e-05,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.0001095,
+        "resolvable_floor_Q": 9129.3,
+        "rho_c_recovered_ohm_um": 1000.0,
+        "sigma_rho_c_ohm_um": 6.42
+      },
+      {
+        "rho_c_ohm_um": 1000.0,
+        "tan_delta_true": 3.1e-05,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 3.1e-05,
+        "sigma_intercept": 0.0001095,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.0003286,
+        "resolvable_floor_Q": 3043.1,
+        "rho_c_recovered_ohm_um": 1000.0,
+        "sigma_rho_c_ohm_um": 19.27
+      },
+      {
+        "rho_c_ohm_um": 1000.0,
+        "tan_delta_true": 0.00031,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 0.00031,
+        "sigma_intercept": 3.893e-05,
+        "detected_at_3sigma": true,
+        "resolvable_floor_tan_delta": 0.0001168,
+        "resolvable_floor_Q": 8562.2,
+        "rho_c_recovered_ohm_um": 1000.0,
+        "sigma_rho_c_ohm_um": 6.53
+      },
+      {
+        "rho_c_ohm_um": 1000.0,
+        "tan_delta_true": 0.00031,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 0.00031,
+        "sigma_intercept": 0.0001168,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.0003504,
+        "resolvable_floor_Q": 2854.1,
+        "rho_c_recovered_ohm_um": 1000.0,
+        "sigma_rho_c_ohm_um": 19.59
+      },
+      {
+        "rho_c_ohm_um": 16000.0,
+        "tan_delta_true": 3.1e-07,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 3.1e-07,
+        "sigma_intercept": 0.0005799,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.00174,
+        "resolvable_floor_Q": 574.8,
+        "rho_c_recovered_ohm_um": 16000.0,
+        "sigma_rho_c_ohm_um": 102.57
+      },
+      {
+        "rho_c_ohm_um": 16000.0,
+        "tan_delta_true": 3.1e-07,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 3.1e-07,
+        "sigma_intercept": 0.00174,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.005219,
+        "resolvable_floor_Q": 191.6,
+        "rho_c_recovered_ohm_um": 16000.0,
+        "sigma_rho_c_ohm_um": 307.7
+      },
+      {
+        "rho_c_ohm_um": 16000.0,
+        "tan_delta_true": 3.1e-06,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 3.1e-06,
+        "sigma_intercept": 0.0005799,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.00174,
+        "resolvable_floor_Q": 574.8,
+        "rho_c_recovered_ohm_um": 16000.0,
+        "sigma_rho_c_ohm_um": 102.57
+      },
+      {
+        "rho_c_ohm_um": 16000.0,
+        "tan_delta_true": 3.1e-06,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 3.1e-06,
+        "sigma_intercept": 0.00174,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.005219,
+        "resolvable_floor_Q": 191.6,
+        "rho_c_recovered_ohm_um": 16000.0,
+        "sigma_rho_c_ohm_um": 307.7
+      },
+      {
+        "rho_c_ohm_um": 16000.0,
+        "tan_delta_true": 3.1e-05,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 3.1e-05,
+        "sigma_intercept": 0.0005801,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.00174,
+        "resolvable_floor_Q": 574.6,
+        "rho_c_recovered_ohm_um": 16000.0,
+        "sigma_rho_c_ohm_um": 102.58
+      },
+      {
+        "rho_c_ohm_um": 16000.0,
+        "tan_delta_true": 3.1e-05,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 3.1e-05,
+        "sigma_intercept": 0.00174,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.005221,
+        "resolvable_floor_Q": 191.5,
+        "rho_c_recovered_ohm_um": 16000.0,
+        "sigma_rho_c_ohm_um": 307.74
+      },
+      {
+        "rho_c_ohm_um": 16000.0,
+        "tan_delta_true": 0.00031,
+        "sigma_Qi_frac": 0.01,
+        "intercept": 0.00031,
+        "sigma_intercept": 0.0005826,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.001748,
+        "resolvable_floor_Q": 572.2,
+        "rho_c_recovered_ohm_um": 16000.0,
+        "sigma_rho_c_ohm_um": 102.69
+      },
+      {
+        "rho_c_ohm_um": 16000.0,
+        "tan_delta_true": 0.00031,
+        "sigma_Qi_frac": 0.03,
+        "intercept": 0.00031,
+        "sigma_intercept": 0.001748,
+        "detected_at_3sigma": false,
+        "resolvable_floor_tan_delta": 0.005243,
+        "resolvable_floor_Q": 190.7,
+        "rho_c_recovered_ohm_um": 16000.0,
+        "sigma_rho_c_ohm_um": 308.07
+      }
+    ],
+    "measurement_floor_vs_contact": {
+      "rho_c_100_ohm_um": {
+        "R_c_total_ohm": 20.0,
+        "three_sigma_tan_delta_floor": 1.087e-05,
+        "equivalent_Q_ceiling": 91973.4,
+        "equivalent_T1_us_at_M28_fluxonium": 2.858
+      },
+      "rho_c_1000_ohm_um": {
+        "R_c_total_ohm": 200.0,
+        "three_sigma_tan_delta_floor": 0.0001087,
+        "equivalent_Q_ceiling": 9197.3,
+        "equivalent_T1_us_at_M28_fluxonium": 0.286
+      },
+      "rho_c_16000_ohm_um": {
+        "R_c_total_ohm": 3200.0,
+        "three_sigma_tan_delta_floor": 0.00174,
+        "equivalent_Q_ceiling": 574.8,
+        "equivalent_T1_us_at_M28_fluxonium": 0.018
+      }
+    },
+    "measurement_floor_reading": "with sigma(Q_i)/Q_i = 1 per cent per device and the 5-rung ladder, the 3-sigma floor on the intrinsic loss tangent is set almost entirely by the contacts.  At the design target of 100 Ohm.um the experiment resolves Q up to ~9.2e+04; at the moire-derived 16000 Ohm.um it resolves only up to ~575, which is not enough to distinguish 'weak' from 'dead'.",
+    "measurement_floor_at_150nH_per_sq": {
+      "rows": {
+        "rho_c_100_ohm_um": {
+          "three_sigma_tan_delta_floor": 2.124e-06,
+          "equivalent_Q_ceiling": 470853.4
+        },
+        "rho_c_1000_ohm_um": {
+          "three_sigma_tan_delta_floor": 2.124e-05,
+          "equivalent_Q_ceiling": 47085.3
+        },
+        "rho_c_16000_ohm_um": {
+          "three_sigma_tan_delta_floor": 0.0003398,
+          "equivalent_Q_ceiling": 2942.8
+        }
+      },
+      "why": "L_sq is gate-tunable over 10-150 nH/sq in situ (arXiv:2403.02320).  M28 chose 29.3 nH/sq because that is the right point for the FLUXONIUM.  It is the wrong point for the MEASUREMENT: the contact term scales as 1/L_sq, so running the ladder at the top of the window buys a factor 5 in sensitivity for free, on the same device, by turning a gate voltage.",
+      "caveat": "the gate voltage that maximises L_sq is not the gate voltage that maximises the superfluid density, and the intrinsic loss is itself a function of filling.  The gate is therefore a PHYSICAL axis (report tan_delta(nu)) and NOT a second fit axis; the 1/N ladder must be refit at each filling.  Treating the gate as a lever on R_c would assume the intrinsic loss is filling-independent, which is exactly the thing being measured."
+    },
+    "geometric_ceiling": {
+      "rows": [
+        {
+          "C_stray_floor_fF": 0.5,
+          "f_min_GHz": 2.0,
+          "Z_max_kohm": 159.2,
+          "rho_c_ohm_um": 100.0,
+          "R_c_total_ohm": 20.0,
+          "Q_single_device_ceiling": 7957.7
+        },
+        {
+          "C_stray_floor_fF": 0.5,
+          "f_min_GHz": 2.0,
+          "Z_max_kohm": 159.2,
+          "rho_c_ohm_um": 1000.0,
+          "R_c_total_ohm": 200.0,
+          "Q_single_device_ceiling": 795.8
+        },
+        {
+          "C_stray_floor_fF": 0.5,
+          "f_min_GHz": 2.0,
+          "Z_max_kohm": 159.2,
+          "rho_c_ohm_um": 16000.0,
+          "R_c_total_ohm": 3200.0,
+          "Q_single_device_ceiling": 49.7
+        },
+        {
+          "C_stray_floor_fF": 1.0,
+          "f_min_GHz": 3.0,
+          "Z_max_kohm": 53.1,
+          "rho_c_ohm_um": 100.0,
+          "R_c_total_ohm": 20.0,
+          "Q_single_device_ceiling": 2652.6
+        },
+        {
+          "C_stray_floor_fF": 1.0,
+          "f_min_GHz": 3.0,
+          "Z_max_kohm": 53.1,
+          "rho_c_ohm_um": 1000.0,
+          "R_c_total_ohm": 200.0,
+          "Q_single_device_ceiling": 265.3
+        },
+        {
+          "C_stray_floor_fF": 1.0,
+          "f_min_GHz": 3.0,
+          "Z_max_kohm": 53.1,
+          "rho_c_ohm_um": 16000.0,
+          "R_c_total_ohm": 3200.0,
+          "Q_single_device_ceiling": 16.6
+        },
+        {
+          "C_stray_floor_fF": 2.0,
+          "f_min_GHz": 4.0,
+          "Z_max_kohm": 19.9,
+          "rho_c_ohm_um": 100.0,
+          "R_c_total_ohm": 20.0,
+          "Q_single_device_ceiling": 994.7
+        },
+        {
+          "C_stray_floor_fF": 2.0,
+          "f_min_GHz": 4.0,
+          "Z_max_kohm": 19.9,
+          "rho_c_ohm_um": 1000.0,
+          "R_c_total_ohm": 200.0,
+          "Q_single_device_ceiling": 99.5
+        },
+        {
+          "C_stray_floor_fF": 2.0,
+          "f_min_GHz": 4.0,
+          "Z_max_kohm": 19.9,
+          "rho_c_ohm_um": 16000.0,
+          "R_c_total_ohm": 3200.0,
+          "Q_single_device_ceiling": 6.2
+        }
+      ],
+      "statement": "Q_contact = Z/R_c and Z = 1/(omega C) is bounded above by the stray capacitance floor and by the requirement hf >> k_B T.  No ladder cleverness beats Z_max/R_c by more than the fit leverage, which this 5-rung design supplies as roughly one decade.",
+      "consequence": "THE HONEST LIMIT OF THE GALVANIC DESIGN.  It decides DEAD vs WEAK cleanly at any plausible contact resistance, decides WEAK vs MARGINAL only if R_c <= ~20 Ohm, and CANNOT certify the VIABLE band (Q >= 3.2e6) at all.  Certifying VIABLE requires taking the contacts out of the resonant loop."
+    },
+    "contactless_option": {
+      "idea": "feed the resonant current into and out of the moire strip through two large-area hBN parallel-plate capacitors instead of galvanic edge contacts, removing R_c from the loop entirely",
+      "rows": [
+        {
+          "hBN_thickness_nm": 3.0,
+          "plate_area_um2": 10.0,
+          "C_series_each_fF": 111.0,
+          "resonator_C_fF": 1.944,
+          "capacitive_participation_of_hBN": 0.03504,
+          "loss_added": 1.75e-07,
+          "equivalent_Q": 5708019.0
+        },
+        {
+          "hBN_thickness_nm": 10.0,
+          "plate_area_um2": 25.0,
+          "C_series_each_fF": 83.2,
+          "resonator_C_fF": 1.944,
+          "capacitive_participation_of_hBN": 0.04672,
+          "loss_added": 2.34e-07,
+          "equivalent_Q": 4281014.0
+        },
+        {
+          "hBN_thickness_nm": 30.0,
+          "plate_area_um2": 100.0,
+          "C_series_each_fF": 111.0,
+          "resonator_C_fF": 1.944,
+          "capacitive_participation_of_hBN": 0.03504,
+          "loss_added": 1.75e-07,
+          "equivalent_Q": 5708019.0
+        }
+      ],
+      "hBN_tan_delta_used": 5e-06,
+      "hBN_ref": "arXiv:2109.00015 / Nature Materials 21, 398 (2022)",
+      "the_blocker": "a fully floating moire island can be given a displacement field but NOT a filling factor: a top and bottom gate induce equal and opposite surface charge on a floating conductor, leaving the net density unchanged.  MATBG without control of nu is useless.  The DC path cannot be removed.",
+      "the_fix": "make the mode DIFFERENTIAL and put ONE galvanic DC bias contact at the strip's electrical centre, which is the rf voltage node.  The rf current leaked into that contact scales as the square of the fractional placement error, so a 1% placement error suppresses the contact loss by ~1e4.  This is a layout change, not a new process.  SPECULATION: no such device has been built for a moire superconductor, and the symmetry of the mode has to be verified by a full-wave solve before it is trusted.",
+      "recommendation": "carry BOTH on the same mask.  The galvanic ladder is the primary measurement because it is the published, de-risked process (arXiv:2511.08466); the differential/node-contact variant is the escape route if the DC 4-probe pre-gate shows R_c(total) > 200 Ohm."
+    },
+    "node_contact_variant": {
+      "idea": "a differential lumped mode: the shunt capacitance is split into two halves, one at each end of the moire strip, both referenced to ground, so the strip's electrical centre is a virtual rf ground.  A single galvanic DC bias contact is placed there, behind an on-chip rf choke.  Filling factor is controllable; the contact carries no rf current to the extent that the mode is balanced.",
+      "formula": "1/Q_node = eps^2 R_c Z / |R_c + Z_bias|^2 (MY ARITHMETIC)",
+      "Z_resonator_ohm": 14880.0,
+      "rows": [
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 50.0,
+          "inv_Q_from_node_contact": 0.04508,
+          "Q_node_ceiling": 22.18
+        },
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 10000.0,
+          "inv_Q_from_node_contact": 0.002733,
+          "Q_node_ceiling": 365.9
+        },
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 100000.0,
+          "inv_Q_from_node_contact": 4.471e-05,
+          "Q_node_ceiling": 22370.0
+        },
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 1000000.0,
+          "inv_Q_from_node_contact": 4.731e-07,
+          "Q_node_ceiling": 2114000.0
+        },
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 50.0,
+          "inv_Q_from_node_contact": 0.4762,
+          "Q_node_ceiling": 2.1
+        },
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 10000.0,
+          "inv_Q_from_node_contact": 0.000286,
+          "Q_node_ceiling": 3496.0
+        },
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 100000.0,
+          "inv_Q_from_node_contact": 2.964e-06,
+          "Q_node_ceiling": 337400.0
+        },
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 1000000.0,
+          "inv_Q_from_node_contact": 2.975e-08,
+          "Q_node_ceiling": 33620000.0
+        },
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 50.0,
+          "inv_Q_from_node_contact": 0.6073,
+          "Q_node_ceiling": 1.647
+        },
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 10000.0,
+          "inv_Q_from_node_contact": 2.964e-05,
+          "Q_node_ceiling": 33740.0
+        },
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 100000.0,
+          "inv_Q_from_node_contact": 2.975e-07,
+          "Q_node_ceiling": 3362000.0
+        },
+        {
+          "placement_error_frac": 0.1,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 1000000.0,
+          "inv_Q_from_node_contact": 2.976e-09,
+          "Q_node_ceiling": 336000000.0
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 50.0,
+          "inv_Q_from_node_contact": 0.004057,
+          "Q_node_ceiling": 246.5
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 10000.0,
+          "inv_Q_from_node_contact": 0.000246,
+          "Q_node_ceiling": 4066.0
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 100000.0,
+          "inv_Q_from_node_contact": 4.024e-06,
+          "Q_node_ceiling": 248500.0
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 1000000.0,
+          "inv_Q_from_node_contact": 4.258e-08,
+          "Q_node_ceiling": 23480000.0
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 50.0,
+          "inv_Q_from_node_contact": 0.04285,
+          "Q_node_ceiling": 23.33
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 10000.0,
+          "inv_Q_from_node_contact": 2.574e-05,
+          "Q_node_ceiling": 38840.0
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 100000.0,
+          "inv_Q_from_node_contact": 2.668e-07,
+          "Q_node_ceiling": 3749000.0
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 1000000.0,
+          "inv_Q_from_node_contact": 2.677e-09,
+          "Q_node_ceiling": 373500000.0
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 50.0,
+          "inv_Q_from_node_contact": 0.05466,
+          "Q_node_ceiling": 18.29
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 10000.0,
+          "inv_Q_from_node_contact": 2.668e-06,
+          "Q_node_ceiling": 374900.0
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 100000.0,
+          "inv_Q_from_node_contact": 2.677e-08,
+          "Q_node_ceiling": 37350000.0
+        },
+        {
+          "placement_error_frac": 0.03,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 1000000.0,
+          "inv_Q_from_node_contact": 2.678e-10,
+          "Q_node_ceiling": 3734000000.0
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 50.0,
+          "inv_Q_from_node_contact": 0.0004508,
+          "Q_node_ceiling": 2218.0
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 10000.0,
+          "inv_Q_from_node_contact": 2.733e-05,
+          "Q_node_ceiling": 36590.0
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 100000.0,
+          "inv_Q_from_node_contact": 4.471e-07,
+          "Q_node_ceiling": 2237000.0
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 3200.0,
+          "Z_bias_ohm": 1000000.0,
+          "inv_Q_from_node_contact": 4.731e-09,
+          "Q_node_ceiling": 211400000.0
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 50.0,
+          "inv_Q_from_node_contact": 0.004762,
+          "Q_node_ceiling": 210.0
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 10000.0,
+          "inv_Q_from_node_contact": 2.86e-06,
+          "Q_node_ceiling": 349600.0
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 100000.0,
+          "inv_Q_from_node_contact": 2.964e-08,
+          "Q_node_ceiling": 33740000.0
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 200.0,
+          "Z_bias_ohm": 1000000.0,
+          "inv_Q_from_node_contact": 2.975e-10,
+          "Q_node_ceiling": 3362000000.0
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 50.0,
+          "inv_Q_from_node_contact": 0.006073,
+          "Q_node_ceiling": 164.7
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 10000.0,
+          "inv_Q_from_node_contact": 2.964e-07,
+          "Q_node_ceiling": 3374000.0
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 100000.0,
+          "inv_Q_from_node_contact": 2.975e-09,
+          "Q_node_ceiling": 336200000.0
+        },
+        {
+          "placement_error_frac": 0.01,
+          "R_c_ohm": 20.0,
+          "Z_bias_ohm": 1000000.0,
+          "inv_Q_from_node_contact": 2.976e-11,
+          "Q_node_ceiling": 33600000000.0
+        }
+      ],
+      "reading": "with a bare 50 Ohm bias line the node contact is WORSE than a galvanic pair -- the diverted current sees no impedance and the loss is enormous. The choke is not optional.  With Z_bias = 1e5 Ohm (a high-impedance meander or an on-chip spiral) and a 1 per cent placement error, the node-contact ceiling clears 1e7 even at the published 3.2 kOhm contact resistance, which is the only route in this design to certifying the VIABLE band.",
+      "risks": [
+        "SPECULATION: no differential node-contacted moire resonator has been built. The balance of the mode has to be verified by a full-wave solve before the eps^2 suppression is trusted; the programme has an accepted solver (out/m12_fullwave_validate.json, TE101 rel err 4.7e-7).",
+        "the choke is a new element with its own loss and its own self-resonance, which must sit above the ladder's 7.5 GHz top.",
+        "a balanced mode couples to the feedline differently and Q_c has to be re-engineered; a symmetric two-port tap is the standard fix."
+      ]
+    }
+  },
+  "thresholds": {
+    "m28_fluxonium_requirement": {
+      "formula": "Gamma_1 = (2 E_L/hbar)(1/Q_ind)|<0|phi|1>|^2, T->0",
+      "E_L_GHz": 0.38,
+      "phi_01": 2.5959,
+      "participation": "p ~ 1 by construction",
+      "rows": [
+        {
+          "target_T1_us": 1.0,
+          "Q_ind_required": 32180.0,
+          "tan_delta_tolerated": 3.108e-05
+        },
+        {
+          "target_T1_us": 10.0,
+          "Q_ind_required": 321800.0,
+          "tan_delta_tolerated": 3.108e-06
+        },
+        {
+          "target_T1_us": 100.0,
+          "Q_ind_required": 3218000.0,
+          "tan_delta_tolerated": 3.108e-07
+        },
+        {
+          "target_T1_us": 1000.0,
+          "Q_ind_required": 32180000.0,
+          "tan_delta_tolerated": 3.108e-08
+        }
+      ],
+      "source": "out/m28_superinductance.json:loss; reproduced here"
+    },
+    "verdict_bands": [
+      {
+        "band": "VIABLE",
+        "Q_i": ">= 3.2e6",
+        "tan_delta": "<= 3.1e-7",
+        "meaning": "a moire-superinductor fluxonium reaches T1 >= 100 us.  This would also make MATBG the best superinductor material ever measured, ahead of granular Al at 4.72e6 (arXiv:2411.12611).",
+        "prior": "SPECULATION that this is reachable.  No van der Waals element of any kind has been measured above tan_delta = 1.7e-5 (arXiv:2512.08059), which is 55x worse than this band's floor."
+      },
+      {
+        "band": "MARGINAL",
+        "Q_i": "3.2e5 - 3.2e6",
+        "tan_delta": "3.1e-6 - 3.1e-7",
+        "meaning": "T1 = 10-100 us.  Comparable to the realised 0-pi's T2E = 25.8 us (arXiv:1910.07542) and to the rhombi chain's T1 = 70 us (arXiv:1311.6521).  Worth building; not competitive with a 2D transmon at ~1 ms (Bland et al., Nature 647, 343 (2025)).",
+        "prior": "would require the moire element to beat every measured vdW element by 5-50x."
+      },
+      {
+        "band": "WEAK",
+        "Q_i": "3.2e4 - 3.2e5",
+        "tan_delta": "3.1e-5 - 3.1e-6",
+        "meaning": "T1 = 1-10 us.  This is where the vdW literature actually sits: all-vdW transmons at T1 = 1.11-1.67 us mean and tan_delta = 1.7e-5 to 1.6e-4 (arXiv:2512.08059); best graphene qubit 716 ns (arXiv:2506.04959).  Publishable physics, not a competitive qubit.",
+        "prior": "THE MOST LIKELY OUTCOME on the current evidence."
+      },
+      {
+        "band": "DEAD",
+        "Q_i": "< 3.2e4",
+        "tan_delta": "> 3.1e-5",
+        "meaning": "route B (M28) is dead and so is every moire CIRCUIT qubit that needs the moire element to carry participation of order one.",
+        "prior": "entirely compatible with every number published to date, including the Q >= 10-50 bound extractable from arXiv:2406.13740."
+      }
+    ],
+    "dilution_escape": {
+      "formula": "T1 = 1/(2 pi f p tan_delta)  (Balgley et al., arXiv:2512.08059)",
+      "rows": [
+        {
+          "participation": 1.0,
+          "tan_delta": 3.1e-05,
+          "f_GHz": 6.0,
+          "T1_us": 0.86
+        },
+        {
+          "participation": 1.0,
+          "tan_delta": 3.1e-06,
+          "f_GHz": 6.0,
+          "T1_us": 8.56
+        },
+        {
+          "participation": 0.5,
+          "tan_delta": 3.1e-05,
+          "f_GHz": 6.0,
+          "T1_us": 1.71
+        },
+        {
+          "participation": 0.5,
+          "tan_delta": 3.1e-06,
+          "f_GHz": 6.0,
+          "T1_us": 17.11
+        },
+        {
+          "participation": 0.1,
+          "tan_delta": 3.1e-05,
+          "f_GHz": 6.0,
+          "T1_us": 8.56
+        },
+        {
+          "participation": 0.1,
+          "tan_delta": 3.1e-06,
+          "f_GHz": 6.0,
+          "T1_us": 85.57
+        },
+        {
+          "participation": 0.01,
+          "tan_delta": 3.1e-05,
+          "f_GHz": 6.0,
+          "T1_us": 85.57
+        },
+        {
+          "participation": 0.01,
+          "tan_delta": 3.1e-06,
+          "f_GHz": 6.0,
+          "T1_us": 855.67
+        }
+      ],
+      "valid_for": "a JUNCTION or a CAPACITOR, which can be shrunk until p ~ 1%: arXiv:2512.08059 explicitly projects T1 ~ 160 us for a conventional transmon with a p = 1% NbSe2/WSe2 junction.",
+      "NOT_valid_for": "a SUPERINDUCTOR.  A superinductor's entire function is to carry essentially all of the circuit's inductive energy, so p ~ 1 is not a design choice that can be relaxed.  Diluting a moire superinductor to p = 1% means it is no longer the inductor.  This asymmetry is why M30's kill criteria bind route B and do NOT bind a moire gatemon."
+    },
+    "what_it_gates": {
+      "gates_hard": [
+        "M28 route B (moire superinductance / moire fluxonium): p ~ 1, so Q_i IS the answer.",
+        "any moire cos(2phi) or protected circuit element.",
+        "any resonator whose inductor is moire, including a moire-based parametric amplifier or KID."
+      ],
+      "gates_softly": [
+        "readout of a topological qubit: a dispersive parity measurement needs the READOUT resonator's Q_i >> Q_c ~ 1e3-1e4 (out/m13_readout_chain.json), but that resonator can be Nb.  A low moire Q_i forces the readout circuit off the flake, costing area and a coupling capacitor, not the physics.",
+        "M15's transmon: the junction can in principle be diluted, so a bad Q_i degrades but does not forbid it."
+      ],
+      "does_not_gate": [
+        "the QAH/SC homojunction physics of M22 section C -- a chiral Majorana edge mode does not care about microwave loss.",
+        "out/m23_majorana.json's argument that a Majorana qubit's lifetime follows from the gap and the parity poisoning rate rather than from a material relaxation time.  M30 does NOT gate the topological programme.  It gates the CIRCUIT programme and the cQED readout of the topological programme."
+      ],
+      "honest_caveat": "M22 section E.7 is right that loss matters less for a topological qubit than for a circuit qubit.  M30 is still the cheapest decisive experiment because it is the only one that returns a NUMBER rather than a design, and because its fabrication is a strict subset of every other device the programme wants to build."
+    }
+  },
+  "chain": {
+    "drive_power": {
+      "rows": [
+        {
+          "Qi": 1000.0,
+          "Qc": 1000.0,
+          "nbar": 0.1,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -136.0,
+          "VNA_output_dBm": -56.0
+        },
+        {
+          "Qi": 1000.0,
+          "Qc": 1000.0,
+          "nbar": 1.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -126.0,
+          "VNA_output_dBm": -46.0
+        },
+        {
+          "Qi": 1000.0,
+          "Qc": 1000.0,
+          "nbar": 1000.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -96.0,
+          "VNA_output_dBm": -16.0
+        },
+        {
+          "Qi": 1000.0,
+          "Qc": 1000.0,
+          "nbar": 1000000.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -66.0,
+          "VNA_output_dBm": 14.0
+        },
+        {
+          "Qi": 10000.0,
+          "Qc": 10000.0,
+          "nbar": 0.1,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -146.0,
+          "VNA_output_dBm": -66.0
+        },
+        {
+          "Qi": 10000.0,
+          "Qc": 10000.0,
+          "nbar": 1.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -136.0,
+          "VNA_output_dBm": -56.0
+        },
+        {
+          "Qi": 10000.0,
+          "Qc": 10000.0,
+          "nbar": 1000.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -106.0,
+          "VNA_output_dBm": -26.0
+        },
+        {
+          "Qi": 10000.0,
+          "Qc": 10000.0,
+          "nbar": 1000000.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -76.0,
+          "VNA_output_dBm": 4.0
+        },
+        {
+          "Qi": 100000.0,
+          "Qc": 100000.0,
+          "nbar": 0.1,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -156.0,
+          "VNA_output_dBm": -76.0
+        },
+        {
+          "Qi": 100000.0,
+          "Qc": 100000.0,
+          "nbar": 1.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -146.0,
+          "VNA_output_dBm": -66.0
+        },
+        {
+          "Qi": 100000.0,
+          "Qc": 100000.0,
+          "nbar": 1000.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -116.0,
+          "VNA_output_dBm": -36.0
+        },
+        {
+          "Qi": 100000.0,
+          "Qc": 100000.0,
+          "nbar": 1000000.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -86.0,
+          "VNA_output_dBm": -6.0
+        },
+        {
+          "Qi": 1000000.0,
+          "Qc": 1000000.0,
+          "nbar": 0.1,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -166.0,
+          "VNA_output_dBm": -86.0
+        },
+        {
+          "Qi": 1000000.0,
+          "Qc": 1000000.0,
+          "nbar": 1.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -156.0,
+          "VNA_output_dBm": -76.0
+        },
+        {
+          "Qi": 1000000.0,
+          "Qc": 1000000.0,
+          "nbar": 1000.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -126.0,
+          "VNA_output_dBm": -46.0
+        },
+        {
+          "Qi": 1000000.0,
+          "Qc": 1000000.0,
+          "nbar": 1000000.0,
+          "f_GHz": 5.5,
+          "P_sample_dBm": -96.0,
+          "VNA_output_dBm": -16.0
+        }
+      ],
+      "total_line_attenuation_dB": 80.0,
+      "ladder_dB": [
+        0.0,
+        20.0,
+        10.0,
+        10.0,
+        30.0
+      ],
+      "cable_loss_dB": 10.0,
+      "formula": "n_r = 2 kappa P_rf / (hbar omega_r (kappa + gamma)^2); form as used in arXiv:2511.08466 Eq. 5, after Norris et al., EPJ Quantum Technology 11, 5 (2024)"
+    },
+    "thermal_photons": {
+      "f_GHz": 5.5,
+      "residual_nbar_at_sample": 0.00517,
+      "requirement": "<< 0.1 so the n = 1 point is drive-defined, not thermally defined",
+      "passes": true,
+      "note": "the standard attenuator-chain bookkeeping; each stage contributes (1 - 1/A_j) n_th(T_j) divided by the attenuation that follows it."
+    },
+    "heat_load": {
+      "worst_case_VNA_output_dBm": 14.0,
+      "power_into_MXC_attenuator_nW": 251.189,
+      "dissipated_at_MXC_nW": 250.937,
+      "typical_MXC_cooling_power_uW_at_20mK": 15.0,
+      "margin": 59.8,
+      "verdict": "the worst point of the whole campaign dissipates a few nW at the mixing chamber, three to four orders below a standard XLD's cooling power.  The power sweep is not thermally limited."
+    },
+    "trace_time": {
+      "rows": [
+        {
+          "Qi": 1000.0,
+          "Qc": 1000.0,
+          "sigma_Qi_frac": 0.01,
+          "IF_bandwidth_Hz": 116000.0,
+          "trace_time_s": 0.00174,
+          "P_sample_dBm": -126.0
+        },
+        {
+          "Qi": 1000.0,
+          "Qc": 1000.0,
+          "sigma_Qi_frac": 0.003,
+          "IF_bandwidth_Hz": 10400.0,
+          "trace_time_s": 0.0193,
+          "P_sample_dBm": -126.0
+        },
+        {
+          "Qi": 10000.0,
+          "Qc": 10000.0,
+          "sigma_Qi_frac": 0.01,
+          "IF_bandwidth_Hz": 11600.0,
+          "trace_time_s": 0.0174,
+          "P_sample_dBm": -136.0
+        },
+        {
+          "Qi": 10000.0,
+          "Qc": 10000.0,
+          "sigma_Qi_frac": 0.003,
+          "IF_bandwidth_Hz": 1040.0,
+          "trace_time_s": 0.193,
+          "P_sample_dBm": -136.0
+        },
+        {
+          "Qi": 100000.0,
+          "Qc": 100000.0,
+          "sigma_Qi_frac": 0.01,
+          "IF_bandwidth_Hz": 1160.0,
+          "trace_time_s": 0.174,
+          "P_sample_dBm": -146.0
+        },
+        {
+          "Qi": 100000.0,
+          "Qc": 100000.0,
+          "sigma_Qi_frac": 0.003,
+          "IF_bandwidth_Hz": 104.0,
+          "trace_time_s": 1.93,
+          "P_sample_dBm": -146.0
+        },
+        {
+          "Qi": 1000000.0,
+          "Qc": 1000000.0,
+          "sigma_Qi_frac": 0.01,
+          "IF_bandwidth_Hz": 116.0,
+          "trace_time_s": 1.74,
+          "P_sample_dBm": -156.0
+        },
+        {
+          "Qi": 1000000.0,
+          "Qc": 1000000.0,
+          "sigma_Qi_frac": 0.003,
+          "IF_bandwidth_Hz": 10.4,
+          "trace_time_s": 19.3,
+          "P_sample_dBm": -156.0
+        }
+      ],
+      "n_sys": 3.0,
+      "n_points": 201,
+      "method": "Probst, Song, Bushev, Ustinov, Weides, Rev. Sci. Instrum. 86, 024706 (2015), arXiv:1410.3365",
+      "scaling_rule": "MINE, flagged: sigma(Q_i)/Q_i = (1 + Q_i/Q_c)/(SNR_amp sqrt(N_pts))"
+    },
+    "campaign": {
+      "n_resonators": 10,
+      "n_power_points": 15,
+      "n_temperatures": 12,
+      "n_gate_points": 9,
+      "worst_trace_time_s": 1.74,
+      "power_sweep_hours": 0.07,
+      "temperature_sweep_hours": 4.06,
+      "gate_sweep_hours": 0.06,
+      "total_acquisition_hours": 4.19,
+      "dominated_by": "temperature settling, not signal to noise",
+      "cooldown_days": 2.0,
+      "verdict": "THE MEASUREMENT ITSELF TAKES A DAY.  Everything else in the schedule is fabrication and cooldowns.  That is the whole argument for doing it first."
+    },
+    "bill_of_materials": {
+      "rf_lines_in": 1,
+      "rf_lines_out": 1,
+      "dc_lines": 4,
+      "fast_lines": 0,
+      "instruments": [
+        "2-port VNA",
+        "DC voltage source for the gates",
+        "lock-in + current source for the companion Hall bar",
+        "dilution refrigerator with a 20 mK base"
+      ],
+      "amplifier": {
+        "baseline": "HEMT only (n_sys ~ 12): the campaign lengthens by 4x, to about four days of acquisition.  STILL FEASIBLE.",
+        "preferred": "JTWPA 3-11 GHz (n_add = 1.0, out/m13_readout_chain.json) with two isolators on the signal port",
+        "conclusion": "THE PARAMETRIC AMPLIFIER IS OPTIONAL FOR M30.  It is mandatory for M15, which needs single-shot readout."
+      },
+      "filtering": "pi-filter at 3 K and a QFilter-class low-pass at the mixing chamber on every DC line (as arXiv:2406.13740); Cryoperm magnetic shield around the sample stage (as arXiv:2512.08059); flux-trapping holes etched in the ground plane (as arXiv:2407.09916)",
+      "attenuation_dB": [
+        0.0,
+        20.0,
+        10.0,
+        10.0,
+        30.0
+      ],
+      "cable_loss_dB": 10.0,
+      "total_dB": 80.0
+    }
+  },
+  "experiment": {
+    "fabrication": [
+      {
+        "step": 1,
+        "what": "base layer",
+        "how": "250 nm Nb (or MBE Al) on high-resistivity / float-zone Si; photolithography, CF4 RIE, O2 descum, Ar surface etch; flux-trapping holes in the ground plane; buffered-oxide etch of residual fluoride",
+        "source": "arXiv:2407.09916 and arXiv:2511.08466 verbatim",
+        "risk": "low -- a published recipe that yields Q_0 = 1e5-6e6"
+      },
+      {
+        "step": 2,
+        "what": "graphite or Ti/Al back gate in an etched window",
+        "how": "e-beam lithography and evaporation inside the resonator cutout",
+        "source": "arXiv:2406.13740",
+        "risk": "low"
+      },
+      {
+        "step": 3,
+        "what": "the magic-angle stack",
+        "how": "tear-and-stack hBN/tBLG/hBN at 1.10 +/- 0.05 deg in an argon glovebox; contact-mode AFM clean of the bottom hBN; chloroform removal of polycarbonate",
+        "source": "arXiv:2406.13740 Methods",
+        "risk": "HIGH AND DOMINANT -- this is the schedule.  Twist-angle yield is the binding constraint and it is the SAME constraint M15 faces."
+      },
+      {
+        "step": 4,
+        "what": "pattern the strips",
+        "how": "e-beam lithography + RIE into the five-rung ladder plus a companion Hall bar on the same flake",
+        "source": "standard",
+        "risk": "medium -- the 400 nm strip width is at the edge of comfortable RIE definition through an encapsulated stack"
+      },
+      {
+        "step": 5,
+        "what": "edge contacts",
+        "how": "RIE to expose the edge, in-situ Ar ion milling, angled Ti/Al (or NbN) evaporation with substrate rotation",
+        "source": "arXiv:2511.08466 Supp. section 2 ('Optimization of the Contact Resistance between hBN encapsulated NbSe2 and Al')",
+        "risk": "HIGH -- this is the pre-registered gate, see kill K2"
+      },
+      {
+        "step": 6,
+        "what": "the shunt capacitor and coupling capacitor",
+        "how": "a 1-8 fF interdigitated or parallel-plate Nb structure and a feedline coupling capacitor sized for the two Q_c decades",
+        "source": "standard",
+        "risk": "medium -- 0.6 fF at the ladder top is at the stray-capacitance floor and must be verified by a full-wave solve, which the programme already has an accepted solver for (out/m12_fullwave_validate.json)"
+      },
+      {
+        "step": 7,
+        "what": "DC characterisation before cooldown 2",
+        "how": "4-probe R(T), R(nu), contact resistance and a Landau fan on the companion Hall bar",
+        "source": "arXiv:2406.13740 does exactly this on the same chip",
+        "risk": "low, and it is what makes the resonator data interpretable"
+      }
+    ],
+    "controls": [
+      "a bare Nb/Al reference resonator on the same chip, expected Q_i ~ 1e6 (arXiv:2511.08466 measured 5.985e6) -- proves the base layer and the chain.",
+      "a control resonator with the same contacts and capacitor but the strip replaced by a shorting Nb bar -- isolates the contact and capacitor loss independently of the 1/N fit.",
+      "THE SAME STRIP GATED OUT OF THE SUPERCONDUCTING DOME (to the correlated insulator at nu = +2 and to charge neutrality) -- the strip is its own control, and this is the one control the moire platform can do that no thin film can.",
+      "the companion Hall bar, giving T_c, nu, R_sheet, R_contact and the twist angle from the Landau fan, on the same flake, in the same cooldown."
+    ],
+    "observables": [
+      {
+        "observable": "Q_i versus photon number, n = 0.1 to 1e6",
+        "diagnostic": "a TLS-saturation curve, Q_i rising as roughly sqrt(1 + (n/nc)) toward a high-power plateau, means the loss is TWO-LEVEL SYSTEMS -- an interface/contamination problem with a known fabrication cure.  A FLAT Q_i(n) means the loss is resistive: contacts, normal regions from twist disorder, or quasiparticles.",
+        "ref": "McRae, Wang, Bejanin, Pagel, Dunsworth, Mariantoni, Rev. Sci. Instrum. 91, 091101 (2020), arXiv:2006.04718"
+      },
+      {
+        "observable": "Q_i versus temperature, 20 mK to 1.2 K",
+        "diagnostic": "a peak near hf/k_B = 180-360 mK is the TLS fingerprint and was observed at 0.2 K in exactly this device class (arXiv:2407.09916).  A monotonic fall tracking exp(-Delta/kT) is quasiparticles.  A rise through T_c ~ 1 K identifies which loss is superconducting-state loss at all.",
+        "ref": "arXiv:2407.09916; arXiv:2512.08059 Fig. 4 inset"
+      },
+      {
+        "observable": "f_r and Q_i versus filling factor nu",
+        "diagnostic": "the superfluid stiffness D_s(nu) comes free with the frequency, and the loss can be mapped across the dome.  If Q_i is high at the dome centre and collapses at the edges, the loss is percolation between superconducting islands -- which is the signature that log-correlated twist disorder (arXiv:2606.17191) predicts.",
+        "ref": "arXiv:2406.13740 for D_s(nu); arXiv:2606.17191 for the percolation prediction"
+      },
+      {
+        "observable": "D_s(T) power law at n = 1",
+        "diagnostic": "BONUS, and it addresses M22 section E.2.  Tanaka et al. extract power-law exponents indicating an anisotropic gap.  Doing it at p ~ 1 and at the single-photon level removes the microwave-current suppression they had to correct for.  CAVEAT: arXiv:2606.17191 shows log-correlated twist disorder mimics nodal behaviour, so this diagnostic is compromised and must be reported with the Landau-fan twist-angle map beside it.",
+        "ref": "arXiv:2406.13740; arXiv:2606.17191"
+      },
+      {
+        "observable": "the Kerr shift and the bifurcation power",
+        "diagnostic": "calibrates the depairing current in situ, and the Kerr coefficient is the moire analogue of the -0.008 to -14.7 Hz/photon measured for NbSe2.  A moire strip should be far more nonlinear.  SPECULATION on the magnitude.",
+        "ref": "arXiv:2511.08466"
+      }
+    ],
+    "kill_criteria": [
+      {
+        "id": "K0",
+        "when": "before cooldown 2",
+        "test": "DC 4-probe contact resistance on the companion Hall bar",
+        "kill": "rho_c > 1000 Ohm.um, i.e. R_c(total) > 200 Ohm on 10 um pads -> DO NOT COOL.  Refabricate with wider contact pads, or switch to the differential node-contact variant.  At the published 3.2 kOhm the ladder cannot resolve above Q ~ 1e2 and the cooldown is wasted."
+      },
+      {
+        "id": "K1",
+        "when": "first analysis",
+        "test": "the gated-out control: Q_i with the strip driven insulating",
+        "kill": "if Q_i is UNCHANGED, the resonator is not sensitive to the moire element at all and the whole measurement is void.  This is the Kreidel failure mode (arXiv:2407.09916), stated in their own words, and it is the reason section 2 exists."
+      },
+      {
+        "id": "K2",
+        "when": "first analysis",
+        "test": "the 1/N fit intercept versus its 3-sigma uncertainty",
+        "kill": "if the intercept is consistent with zero because the contact term dominates by more than ~100x, the experiment has only bounded the contacts.  Report the bound, refabricate, do not proceed to design."
+      },
+      {
+        "id": "K3",
+        "when": "the answer",
+        "test": "intercept tan_delta at n = 1",
+        "kill": "tan_delta > 3.1e-5 (Q < 3.2e4), reproduced on at least two flakes, with the gated-out control confirming the loss tracks the superconducting state -> ROUTE B IS DEAD.  Stop the M28 superinductance programme.  The moire element cannot carry participation of order one."
+      },
+      {
+        "id": "K4",
+        "when": "the answer",
+        "test": "intercept tan_delta at n = 1",
+        "kill": "tan_delta <= 3.1e-6 (Q >= 3.2e5) -> ROUTE B IS UNBLOCKED.  Build the M28 fluxonium.  This is the only outcome that justifies further moire circuit design."
+      },
+      {
+        "id": "K5",
+        "when": "diagnosis",
+        "test": "Q_i(n) and Q_i(T)",
+        "kill": "flat in power AND flat in temperature below T_c -> the loss is neither TLS nor quasiparticles.  It is contacts or normal regions from twist disorder.  The cure is fabrication, not material, and the programme should say so rather than reporting a material number."
+      }
+    ]
+  },
+  "comparison_with_m15": {
+    "m30": {
+      "device": "M30 loss ladder: 10 lumped resonators + 1 companion Hall bar on 1 flake",
+      "process_modules": [
+        "base superconductor layer",
+        "back gate",
+        "magic-angle stack",
+        "strip patterning",
+        "edge contacts",
+        "shunt/coupling caps"
+      ],
+      "n_process_modules": 6,
+      "junction_module": false,
+      "rf_lines": 2,
+      "dc_lines": 4,
+      "fast_lines": 0,
+      "instruments": [
+        "VNA",
+        "DC source",
+        "lock-in"
+      ],
+      "parametric_amplifier": "optional",
+      "single_shot_readout": false,
+      "purcell_filter": false,
+      "acquisition_days": 1.0,
+      "cooldowns_planned": 2,
+      "yields_a_number_even_if": "the device is not a qubit, not in the transmon regime, and has the wrong I_c R_n -- because a resonator has no E_J/E_C window to hit"
+    },
+    "m15": {
+      "device": "M15 first device: 6-cell gatemon ladder (out/m15_first_device.json)",
+      "process_modules": [
+        "base superconductor layer",
+        "back gate",
+        "magic-angle stack",
+        "junction patterning",
+        "edge contacts",
+        "Al/AlOx junction + bandage",
+        "44.6 fF island + 310 um routed line",
+        "readout resonator (M16)",
+        "Purcell filter (M18)"
+      ],
+      "n_process_modules": 9,
+      "junction_module": true,
+      "rf_lines": 3,
+      "dc_lines": 2,
+      "fast_lines": 1,
+      "instruments": [
+        "VNA",
+        "AWG",
+        "IQ mixers + LO chain",
+        "digitiser",
+        "DC source"
+      ],
+      "parametric_amplifier": "mandatory (JTWPA 3-11 GHz, single-shot readout)",
+      "single_shot_readout": true,
+      "purcell_filter": true,
+      "acquisition_days": 14.0,
+      "cooldowns_planned": 3,
+      "yields_a_number_only_if": "I_c R_n lands in 7-60 uV AND the cell is 'live' AND 'readable' -- M15's own coverage table shows only 2-3 of 6 cells are usable at any given anchor"
+    },
+    "ratios": {
+      "process_modules": 1.5,
+      "instrument_channels": 2.0,
+      "acquisition_days": 14.0,
+      "note": "ESTIMATE.  These are counts of modules, lines and days, not currency.  The programme has never costed a device in currency and this module will not start."
+    },
+    "the_subset_argument": "M30's fabrication is a STRICT SUBSET of M15's.  Both need the same base layer, the same back gate, the same magic-angle stack, the same edge contacts.  M15 additionally needs an Al/AlOx junction module, a 44.6 fF island, a readout resonator, a Purcell filter, and a fast control chain.  Building M30 first therefore costs NOTHING that M15 would not have paid anyway -- the stack is the schedule, and M30 is the pilot run for it.",
+    "the_attribution_argument": "M15's own list of what device one settles (out/m15_first_device.json:what_device_one_settles) includes T1 by inversion recovery, flagged 'NEVER MEASURED IN TBG BY ANYONE'.  But a transmon T1 is a SUM: junction dielectric loss, moire element loss, contact loss, quasiparticles, Purcell, and the package, and the design has no way to separate them.  Balgley et al. (arXiv:2512.08059) needed a SEPARATE resonator measurement of the same material to attribute their qubit's T1 to dielectric loss -- exactly M30 -- and they found qubit-derived and resonator-derived loss tangents agreeing to within a factor 2.  If M15 runs first and returns T1 = 700 ns, nobody can say whether the moire is at fault.  If M30 runs first, M15's T1 is predicted before it is measured.",
+    "the_counter_argument": "Against building M30 first: out/m23_majorana.json argues explicitly that a topological qubit's lifetime follows from the gap and the parity-poisoning rate, both computable, so 'the topology can be designed now and the number measured afterwards'.  That is correct, and M30 does not gate the topological programme.  The rebuttal is scope, not physics: M30 gates route B entirely, gates every moire resonator and amplifier, and makes M15 interpretable -- three things for the price of a subset of one device's fabrication.",
+    "recommendation": "BUILD M30 FIRST.  Four reasons, in order of strength: (1) M30's fabrication is a strict subset of M15's, so it is not a detour; (2) M30 returns a number unconditionally, while M15 returns one only if I_c R_n lands in a window it cannot control; (3) without M30, M15's T1 cannot be attributed to anything; (4) a null result at K3 cancels M28 and every downstream moire circuit module, which is the largest single piece of design work the programme could avoid.  The honest cost of being wrong about this ordering is one flake and two weeks."
+  },
+  "sensitivity_summary": {
+    "rows": [
+      {
+        "variant": "published moire geometry (arXiv:2406.13740)",
+        "participation": 0.02,
+        "resolves_up_to_Q": 20.9,
+        "decides": "nothing -- it is a bound of Q >= 21"
+      },
+      {
+        "variant": "galvanic ladder, L_sq = 29.3 nH/sq, rho_c = 1000 Ohm.um",
+        "participation": 1.0,
+        "resolves_up_to_Q": 9197.3,
+        "decides": "DEAD vs not-DEAD"
+      },
+      {
+        "variant": "galvanic ladder, L_sq = 29.3 nH/sq, rho_c = 100 Ohm.um",
+        "participation": 1.0,
+        "resolves_up_to_Q": 91973.4,
+        "decides": "DEAD vs WEAK"
+      },
+      {
+        "variant": "galvanic ladder, L_sq = 150 nH/sq, rho_c = 100 Ohm.um",
+        "participation": 1.0,
+        "resolves_up_to_Q": 470853.4,
+        "decides": "DEAD vs WEAK vs MARGINAL"
+      },
+      {
+        "variant": "differential node-contact, rho_c = 100 Ohm.um, Z_bias = 1e4 Ohm (a 320 nH on-chip choke), eps = 1 per cent",
+        "participation": 1.0,
+        "resolves_up_to_Q": 3374000.0,
+        "decides": "everything up to the VIABLE boundary -- SPECULATIVE, never built"
+      }
+    ],
+    "headline": "participation is necessary but not sufficient.  Driving p from 0.02 to 1.0 buys 50x; the remaining ceiling is set by the CONTACTS, and beating it needs either 20 Ohm contacts and the top of the gate-tunable L_sq window (reaching Q ~ 5e5, enough to decide three of the four bands) or the differential node-contact variant (reaching Q ~ 3e6, enough to decide all four).  Both fit on one mask."
+  },
+  "headline": "The measurement M22 section E.7 asks for cannot be done in the geometry the moire cQED literature uses.  For a sample terminating a Z0 = 50 Ohm line the exact participation is p = sin(2 phi)/(sin(2 phi)/2 + pi/2 - phi) with phi = arctan(omega L/Z0), so the perturbative regime that makes the kinetic-inductance extraction clean is the same regime in which p << 1 and the loss is invisible.  Shortening the line from a 5.8 mm quarter wave to a 4-46 um stub drives p to 0.9999, and reproduces M28's 2.4 fF lumped design from the distributed side.  With p ~ 1 the contacts become the ceiling: at the one published moire rf contact resistance (3.2 kOhm, arXiv:2406.13742) the whole ladder is pinned below Q ~ 22, so a length ladder is mandatory and the contact resistance is a pre-registered gate.  The experiment is one flake, six process modules all of which M15 needs anyway, two RF lines, no fast lines, an optional parametric amplifier, and about four hours of acquisition.",
+  "choices": [
+    {
+      "key": "material",
+      "value": "MATBG, theta = 1.10 deg",
+      "basis": "the programme is a TBG programme (M22, M28); MATBG is also the only moire material with an existing cQED measurement to build on (arXiv:2406.13740)",
+      "up": "magic-angle twisted TRILAYER at 1.71 deg -- the ONLY moire material with a published CPR-derived L_sq (arXiv:2403.02320), higher T_c, and a stiffer superconductor; but it is not the programme's material and M28's design is already anchored to it",
+      "down": "a NbSe2 control strip -- fully de-risked (arXiv:2511.08466) but answers nothing about moire"
+    },
+    {
+      "key": "L_sq",
+      "value": "29.3 nH/sq",
+      "basis": "M28's chosen operating point, reached by gating the measured 10-150 nH/sq window of arXiv:2403.02320 downward; it is the value the M28 fluxonium design actually uses",
+      "up": "150 nH/sq -> same L in 5x fewer squares, so the ladder's N lever shrinks and contact separation gets harder; Z rises, which helps Q_contact",
+      "down": "10 nH/sq -> a longer strip for the same L, a better N lever, but 15x more area exposed to twist disorder"
+    },
+    {
+      "key": "strip_width_w",
+      "value": "400 nm",
+      "basis": "M28's w/xi = 2 point; narrow enough to stay 2D against vortex entry, wide enough to stay above the quasi-1D phase-slip regime",
+      "up": "2 um -> 5x lower R_sheet contribution per square is unchanged, but contact resistance per contact falls 5x because R_c scales as rho_c/W",
+      "down": "200 nm -> w ~ xi, quasi-1D; phase slips replace vortices and NO measurement exists for a moire superconductor in that regime"
+    },
+    {
+      "key": "ladder_N_squares",
+      "value": "[2, 5, 14.7, 40, 100]",
+      "basis": "a factor 50 in N is a factor 50 lever on the contact term, which is what separates R_c from tan_delta; 14.7 is M28's design point and is kept as the ladder's centre so M30 measures the element M28 designed",
+      "up": "a decade more (N = 300) -> C would have to fall below 0.5 fF, under stray; the top of the ladder is capacitance-limited, not material-limited",
+      "down": "a factor 5 lever only -> the intercept uncertainty roughly triples"
+    },
+    {
+      "key": "f_r_band",
+      "value": "3.8 - 7.5 GHz",
+      "basis": "inside the JTWPA 3-11 GHz band already catalogued in out/m13_readout_chain.json, and hf/k_B = 180-360 mK sits above the 20 mK base so the TLS bath is in its ground state",
+      "up": "10 GHz -> hf/k_B = 480 mK, a cleaner TLS ground state, but C falls toward stray and the amplifier band runs out",
+      "down": "1 GHz -> much higher Z and a much better Q_contact, but hf/k_B = 48 mK is comparable to the base temperature and the TLS physics is thermally smeared"
+    },
+    {
+      "key": "Qc_target",
+      "value": "matched to the expected Q_i, decade by decade",
+      "basis": "circle-fit precision on Q_i degrades as (1 + Q_i/Q_c); Q_c ~ Q_i is the flat part of that curve.  Because Q_i is the unknown, the ladder carries TWO coupling capacitors per N, spanning Q_c = 1e4 and 1e6",
+      "up": "Q_c = 1e7 -> the resonance is too shallow to fit at n=1",
+      "down": "Q_c = 1e3 -> Q_l is coupling-dominated and sigma(Q_i)/Q_i blows up by Q_i/Q_c"
+    },
+    {
+      "key": "rho_c_design_target",
+      "value": "100 Ohm.um on 10 um pads = 20 Ohm total",
+      "basis": "the pre-registered gate on cooldown 2.  Wang et al., Science 342, 614 (2013) edge contacts to a 2D crystal reach ~100 Ohm.um; flaring the moire into a 10 um pad at each end gives 10 Ohm per contact.  The gate is set at 10x margin, rho_c <= 1000 Ohm.um",
+      "up": "16000 Ohm.um -- the published moire figure of 3.2 kOhm under an ASSUMED 2 um contact width -> the whole ladder is pinned below Q ~ 22 and the intercept resolves only to Q ~ 575; the experiment fails",
+      "down": "10 Ohm.um, or a 25 um pad -> the intercept resolves into the 1e6 decade and the VIABLE band comes within reach even galvanically"
+    },
+    {
+      "key": "target_T1_for_thresholds",
+      "value": "100 us",
+      "basis": "M28's headline requirement, Q_ind >= 3.2e6; it is also the level at which a moire fluxonium would be worth building against a 2D transmon at ~1 ms (Bland et al., Nature 647, 343 (2025))",
+      "up": "1 ms -> Q_ind = 3.2e7, tan_delta = 3.1e-8, beyond any measured superinductor including grAl at 4.7e6",
+      "down": "10 us -> Q_ind = 3.2e5; comparable to the realised 0-pi's T2E = 25.8 us, so still a meaningful device"
+    },
+    {
+      "key": "sigma_Qi_target",
+      "value": "1 % (1 sigma, per point)",
+      "basis": "the level at which the 1/N intercept is limited by device-to-device fabrication scatter rather than by counting statistics; Tanaka's own circle fit reached 2.7% on Q_i = 1045",
+      "up": "0.3 % -> 10x the averaging time, still hours not days",
+      "down": "3 % -> the intercept uncertainty triples and the bottom kill band widens by half a decade"
+    },
+    {
+      "key": "n_sys",
+      "value": "3.0 quanta",
+      "basis": "JTWPA n_add = 1.0 (out/m13_readout_chain.json) plus half a quantum of vacuum plus ~1.5 quanta for insertion loss between sample and amplifier; a deliberately pessimistic bookkeeping",
+      "up": "12 quanta -- no TWPA at all, HEMT only -> 4x the averaging time, which is still hours.  THE TWPA IS OPTIONAL FOR THIS EXPERIMENT",
+      "down": "1.5 quanta with a KI-TWPA (n_add = 0.4, arXiv:2402.11751) -> 2x faster"
+    },
+    {
+      "key": "attenuation_ladder",
+      "value": "[0, 20, 10, 10, 30] dB at 300K/50K/4K/still/MXC",
+      "basis": "70 dB cold plus ~10 dB cable loss puts n = 1 at a VNA output of about -57 dBm and n = 1e6 at about +3 dBm, the whole sweep inside one instrument's range with a room-temperature step attenuator for the top decade.  Comparable to the 65 dB of arXiv:2407.09916 and the 70-84 dB of arXiv:2512.08059",
+      "up": "90 dB -> quieter, but the VNA must run near +23 dBm for the saturation sweep and the MXC attenuator heat load rises 100x",
+      "down": "50 dB -> the 4 K blackbody leak is only 40 dB down and the residual photon occupancy at the sample rises above 1e-2"
+    },
+    {
+      "key": "participation_convention",
+      "value": "exact distributed p(phi), section 2",
+      "basis": "derived here and checked against BOTH published perturbative forms: it reduces to Kreidel's p = 2|delta_omega/omega| for omega L << Z0 and to L_k/L_total for a lumped mode",
+      "up": "using 2|delta f/f| everywhere overstates p by up to 2x in the non-perturbative regime, which OVERSTATES the bound on tan_delta",
+      "down": "using L_k/L_total everywhere understates p by 2x in the perturbative regime, which is the conservative direction for a bound"
+    }
+  ],
+  "no_literature_found": [
+    "No measurement of Q_i versus photon number for ANY moire circuit element.  Tanaka et al. (arXiv:2406.13740) report Q_i = 1044.7 +/- 28.5 and sweep microwave power on the RESONANCE FREQUENCY (Fig. 5d) and DC bias current on Q_i (Supp. Fig. 17), but never report Q_i versus microwave power.  M22 section E.7 stands, NARROWED: the statement is now specific to moire, because arXiv:2511.08466 (Nov 2025) did publish single-photon Q_i for twelve NbSe2 elements.",
+    "No measurement of Q_i versus temperature for any moire circuit element.",
+    "No measurement of the microwave loss of a moire galvanic contact, which arXiv:2406.13742 shows dominates the rf resistance at R_c = 3.2 kOhm.",
+    "No published sheet kinetic inductance for magic-angle twisted BILAYER graphene at CPR precision.  The 10-150 nH/sq window this design uses is TRILAYER at 1.71 deg (arXiv:2403.02320).",
+    "No moire circuit element has ever been operated at a participation ratio above a few per cent.  The highest in the literature, computed here from arXiv:2511.08466's own numbers, is p = 0.53 and it is NbSe2, not moire.",
+    "No measurement of the vortex-entry or phase-slip RATE of a moire kinetic inductor.",
+    "No measurement of quasiparticle-parity lifetime in a moire circuit.",
+    "No moire superconducting qubit of any kind."
+  ]
+}

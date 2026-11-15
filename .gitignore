@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+out/
+scripts/p4_yeniden_uretim_sonuc.json
+.venv/
+.env

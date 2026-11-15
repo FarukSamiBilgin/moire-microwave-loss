@@ -1,0 +1,80 @@
+ERRATA for m30_loss.json and m31_route_ranking.json
+====================================================
+
+These two JSON files are project artifacts kept unchanged in this record.
+Some of their descriptive and bibliographic fields predate the reference,
+claim and arithmetic checks behind the preprint. Where a field below
+differs from the preprint text or from p4_yeniden_uretim.py, the preprint
+and the independent script are correct. Fields are given as JSON paths.
+
+1. Generating scripts (included in this record)
+   - m30_loss.json: run_m30_loss.py
+   - m31_route_ranking.json: run_m31_route_ranking.py
+   Both scripts are deterministic and need only NumPy; run from a folder
+   laid out as scripts/ and out/, each regenerates its JSON file with
+   identical content (checked 2026-11-13). The descriptive text fields
+   listed below are written by these scripts, so the scripts carry the
+   same outdated wording. p4_yeniden_uretim.py recomputes,
+   without reading the JSON files, every number the preprint uses except
+   the readout-chain figures (80 dB attenuation, residual thermal occupancy
+   5.17e-3 at 5.5 GHz, acquisition budget 4.19 h), which are taken from
+   m30_loss.json (chain.*) and were not recomputed independently.
+
+2. Author list (McRae et al., Rev. Sci. Instrum. 91, 091101 (2020))
+   - literature.fit_methods.loss_review
+   - experiment.observables[0].ref
+   The author list in these fields is wrong; the correct list is the one
+   in the preprint's bibliography.
+
+3. Reading of the participation curve
+   - participation.participation_curve_reading
+   The thresholds written there (p = 0.5 at omega L/Z0 = 1.4; 0.99 above
+   ~80; 5% agreement below ~0.35) are not those of the exact expression.
+   Correct values (preprint Sec. II, Table I): p = 0.5 at 0.46, 0.99 at
+   5.7, 0.997 at 10.5; the perturbative form is within 5% only up to ~0.3.
+
+4. Quarter-wave length
+   - design.ladder_note, headline
+   "~5.8 mm" quarter wave: the preprint uses 5.4 mm at 5.5 GHz (7.1 mm at
+   4.2 GHz) at the same effective permittivity.
+
+5. Q_i of NbSe2 device D6 (Zaman et al.)
+   - literature.zaman_nbse2_KI.devices[5][8]
+   - participation.published_vdw_ladder.rows[5].Qi
+   28000 is the arXiv-version value; the published value used in the
+   preprint is 2.0e4.
+
+6. Amplifier attributions and the HEMT-only estimate
+   - literature.amplifier.ref, literature.amplifier.name
+   - chain.bill_of_materials.amplifier.preferred
+   - choices[4].basis, choices[9].basis, choices[9].down
+   - comparison_with_m15.m15.parametric_amplifier
+   - chain.bill_of_materials.amplifier.baseline
+   The JTWPA and KI-TWPA attributions in these fields did not pass the
+   reference check and are not used in the preprint. The 4.19 h budget
+   (chain.campaign) was computed at n_sys = 3 quanta; the "about four days"
+   HEMT-only figure is inconsistent with it and is not used. The preprint
+   states only that the signal-limited part grows roughly fourfold with a
+   HEMT alone.
+
+7. Contact-width label
+   - contacts.contact_ceiling[2].label, choices[6].up
+   "ASSUMED 2 um" contact width: the width of the published 3.2 kOhm
+   contact is not available. The preprint applies the 3.2 kOhm unchanged at
+   the 10 um pad (rho_c = 16000 Ohm um) and states the assumption.
+
+8. Fabrication-recipe attributions
+   - experiment.fabrication[0] .. experiment.fabrication[4]
+   The 250 nm Nb base layer, the graphite gate option, the tear-and-stack /
+   argon-glovebox / 1.10 +/- 0.05 deg recipe attributed to Tanaka et al.,
+   and the NbN contact option are not supported by the checked sources.
+   The preprint's fabrication paragraph gives the recipe with its sources.
+
+9. Other fields that did not pass the checks and are not used
+   - design.linearity_check.conservative_alternative
+     (the "6 nA" junction critical current attributed to Jha et al.)
+   - literature.fit_methods.photon_number, chain.drive_power.formula
+     ("Eq. 5"; the preprint cites Supplementary Eq. (3) of Zaman et al.)
+   - experiment.observables[2] (dome-edge percolation prediction)
+   - literature.hBN.eps_ref ("de Put"; the author is Van de Put)
+   - literature.graphene_qubit.note

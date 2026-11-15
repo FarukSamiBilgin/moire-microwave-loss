@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite the preprint."
+title: "The single-photon microwave loss of a moiré superconducting element: code and data"
+type: software
+authors:
+  - family-names: Bilgin
+    given-names: Faruk Sami
+    affiliation: Independent Researcher
+    orcid: "https://orcid.org/0009-0001-9064-4410"
+license: MIT
+repository-code: "https://github.com/FarukSamiBilgin/moire-microwave-loss"
+doi: 10.5281/zenodo.24204124
+keywords:
+  - moiré superconductors
+  - magic-angle twisted bilayer graphene
+  - microwave loss
+  - participation ratio
+  - kinetic inductance
+  - superconducting resonators
+preferred-citation:
+  type: article
+  title: "The single-photon microwave loss of a moiré superconducting element: why the published geometry cannot measure it, and a two-device experiment that can"
+  authors:
+    - family-names: Bilgin
+      given-names: Faruk Sami
+      orcid: "https://orcid.org/0009-0001-9064-4410"
+  year: 2026
+  publisher:
+    name: Zenodo
+  doi: 10.5281/zenodo.24204124
+  status: preprint

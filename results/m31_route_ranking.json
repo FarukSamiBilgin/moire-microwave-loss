@@ -1,0 +1,171 @@
+{
+ "_meta": {
+  "script": "run_m31_route_ranking.py",
+  "paper": "paper/M31_ROUTE_RANKING.md",
+  "purpose": "reproducible arithmetic for section 9 of the route ranking",
+  "inputs": [
+   "paper/M27_FLOWERMON.md (N, Delta, G_m, k_F, E_J2 target)",
+   "paper/M28_SUPERINDUCTANCE.md (phase law, xi values)",
+   "out/m30_loss.json (ladder capacitances)"
+  ]
+ },
+ "sec_9_1_kappa_tau_lock": {
+  "model": "short junction, E(phi) = -Delta sqrt(1 - tau sin^2(phi/2))",
+  "analytic_tunnel_limit": "E_J1 = Delta tau/4, E_J2 = Delta tau^2/64, hence kappa = tau/16",
+  "saturation_as_tau_to_1": 0.1999,
+  "rows": [
+   {
+    "tau": 0.0001,
+    "kappa_exact": 6e-06,
+    "tau_over_16": 6.25e-06
+   },
+   {
+    "tau": 0.003,
+    "kappa_exact": 0.000188,
+    "tau_over_16": 0.0001875
+   },
+   {
+    "tau": 0.069,
+    "kappa_exact": 0.004468,
+    "tau_over_16": 0.0043125
+   },
+   {
+    "tau": 0.1,
+    "kappa_exact": 0.006583,
+    "tau_over_16": 0.00625
+   },
+   {
+    "tau": 0.5,
+    "kappa_exact": 0.042734,
+    "tau_over_16": 0.03125
+   },
+   {
+    "tau": 0.9,
+    "kappa_exact": 0.125077,
+    "tau_over_16": 0.05625
+   },
+   {
+    "tau": 0.999,
+    "kappa_exact": 0.196965,
+    "tau_over_16": 0.0624375
+   },
+   {
+    "tau": 0.99999,
+    "kappa_exact": 0.199942,
+    "tau_over_16": 0.06249938
+   }
+  ],
+  "reading": "CHOICE C1 (kappa) and CHOICE C2 (tau) in M27 are the same parameter. At M27's tau = 3e-3 the delivered kappa is 1.9e-4, 533x below the assumed 0.1."
+ },
+ "sec_9_2_self_consistent_design_point": {
+  "N_channels": 1221.0,
+  "Delta_GHz": 62.48,
+  "a2_at_45deg_l2": 0.333333,
+  "EJ2_target_GHz": 1.908,
+  "tau_self_consistent": 0.0693,
+  "kappa_self_consistent": 0.004331,
+  "ratio_to_assumed_kappa_0p1": 23.1,
+  "EJ1_at_zero_twist_GHz": 1321.6,
+  "EJ2_check_GHz": 1.908,
+  "EJ2_at_M27_tau_3e-3_GHz": 0.003576
+ },
+ "sec_9_3_umklapp_kinematics": {
+  "note": "a triangular moire superlattice has a six-fold reciprocal star, so the interface mismatch is periodic in 60 deg: theta_eff = min_n |Theta - 60n|, NOT Theta",
+  "rows": [
+   {
+    "Theta_deg": 27.2,
+    "theta_eff_deg": 27.2,
+    "G_int_nm^-1": 0.2481,
+    "two_kF_nm^-1": 0.2478,
+    "umklapp_open": false
+   },
+   {
+    "Theta_deg": 45.0,
+    "theta_eff_deg": 15.0,
+    "G_int_nm^-1": 0.1377,
+    "two_kF_nm^-1": 0.2478,
+    "umklapp_open": true
+   },
+   {
+    "Theta_deg": 60.0,
+    "theta_eff_deg": 0.0,
+    "G_int_nm^-1": 0.0,
+    "two_kF_nm^-1": 0.2478,
+    "umklapp_open": true
+   },
+   {
+    "Theta_deg": 90.0,
+    "theta_eff_deg": 30.0,
+    "G_int_nm^-1": 0.2731,
+    "two_kF_nm^-1": 0.2478,
+    "umklapp_open": false
+   }
+  ]
+ },
+ "sec_9_4_phase_per_micron": {
+  "law": "dphi/dl = 2/(3 sqrt3 xi), M28 sec 2.1, from Jha et al. Eq. 15",
+  "rows": [
+   {
+    "material": "moire, Jha SQUID upper bound",
+    "xi_nm": 200.0,
+    "rad_per_um": 1.92
+   },
+   {
+    "material": "moire, Jha intrinsic-Ic estimate (hole)",
+    "xi_nm": 50.0,
+    "rad_per_um": 7.7
+   },
+   {
+    "material": "granular Al (Jha Fig. 3)",
+    "xi_nm": 24.0,
+    "rad_per_um": 16.04
+   },
+   {
+    "material": "NbN (Jha Fig. 3)",
+    "xi_nm": 15.0,
+    "rad_per_um": 25.66
+   }
+  ],
+  "grAl_over_moire": {
+   "xi_200nm": 8.3,
+   "xi_50nm": 2.1
+  },
+  "NbN_over_moire": {
+   "xi_200nm": 13.3,
+   "xi_50nm": 3.3
+  },
+  "reading": "the moire superconductor is the WORST of the three at holding phase per unit length; M28 never applies its own law to the two comparison materials in its source's Fig. 3"
+ },
+ "sec_9_5_route_D_capacitance_conflict": {
+  "C_gate_published_fF": 3.0,
+  "source": "Tanaka et al., arXiv:2406.13740 / Nature 638, 99 (2025), Methods",
+  "rows": [
+   {
+    "N_squares": 2.0,
+    "C_required_fF": 7.685,
+    "below_published_C_gate": false
+   },
+   {
+    "N_squares": 5.0,
+    "C_required_fF": 4.092,
+    "below_published_C_gate": false
+   },
+   {
+    "N_squares": 14.7,
+    "C_required_fF": 1.944,
+    "below_published_C_gate": true
+   },
+   {
+    "N_squares": 40.0,
+    "C_required_fF": 1.067,
+    "below_published_C_gate": true
+   },
+   {
+    "N_squares": 100.0,
+    "C_required_fF": 0.599,
+    "below_published_C_gate": true
+   }
+  ],
+  "reading": "the three rungs that carry the 1/N lever all specify a TOTAL resonator capacitance smaller than the published gate capacitance of a real MATBG cQED element"
+ }
+}
